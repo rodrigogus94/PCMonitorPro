@@ -1,0 +1,20 @@
+# Build
+bin/
+obj/
+publish/
+dist/
+*.pdb
+*.user
+.vs/
+.vscode/
+TestResults/
+
+# Binários de terceiros baixados em tempo de execução (não versionar)
+Native/
+*.log
+
+# Os drivers embutidos (src/PCMonitorPro/Drivers) FAZEM parte do repositório: pacotes oficiais assinados
+!src/PCMonitorPro/Drivers/**
+
+# Local
+.plano/

@@ -1,0 +1,29 @@
+name: CI
+
+# Compila e roda os testes a cada push e pull request. Não publica nada.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-dotnet@3e891b0cb619bf60e2c25674b222b8940e2c1c25 # v4.1.0
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restaurar
+        run: dotnet restore PCMonitorPro.sln
+
+      - name: Compilar
+        run: dotnet build PCMonitorPro.sln -c Release --no-restore -nologo
+
+      - name: Testes
+        run: dotnet test PCMonitorPro.sln -c Release --no-build -nologo

@@ -1,0 +1,56 @@
+name: Release
+
+# Só publica quando uma tag de versão é criada (git tag v0.17.0 && git push --tags).
+# O arquivo publicado vem com SHA256SUMS e atestado de procedência (prova de que foi gerado por este workflow).
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write       # criar a release
+  id-token: write       # atestado de procedência
+  attestations: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-dotnet@3e891b0cb619bf60e2c25674b222b8940e2c1c25 # v4.1.0
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Testes (a release só sai se passarem)
+        run: dotnet test PCMonitorPro.sln -c Release -nologo
+
+      - name: Publicar (arquivo único, com o .NET embutido)
+        run: dotnet publish src/PCMonitorPro/PCMonitorPro.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -o dist -nologo
+
+      - name: Montar pacote e somas de verificação
+        shell: pwsh
+        run: |
+          Copy-Item README.md dist/README.md
+          Copy-Item LICENSE dist/LICENSE
+          Copy-Item NOTICE.md dist/NOTICE.md
+          Compress-Archive -Path dist/PCMonitorPro.exe, dist/README.md, dist/LICENSE, dist/NOTICE.md -DestinationPath PCMonitorPro.zip
+          $files = 'dist/PCMonitorPro.exe', 'PCMonitorPro.zip'
+          $files | ForEach-Object { $h = (Get-FileHash $_ -Algorithm SHA256).Hash.ToLower(); "$h  $(Split-Path $_ -Leaf)" } | Set-Content -Encoding ascii SHA256SUMS.txt
+          Get-Content SHA256SUMS.txt
+
+      - uses: actions/attest-build-provenance@ef244123eb79f2f7a7e75d99086184180e6d0018 # v1.4.4
+        with:
+          subject-path: |
+            dist/PCMonitorPro.exe
+            PCMonitorPro.zip
+
+      - name: Criar a release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create $env:GITHUB_REF_NAME dist/PCMonitorPro.exe PCMonitorPro.zip SHA256SUMS.txt --title "PC Monitor Pro $env:GITHUB_REF_NAME" --generate-notes

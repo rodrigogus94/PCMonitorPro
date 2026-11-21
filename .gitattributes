@@ -1,0 +1,6 @@
+# Drivers embutidos: nunca converter fins de linha nem tratar como texto (o .cat assina o conteudo exato de .inf/.sys/.dll)
+src/PCMonitorPro/Drivers/** -text -diff
+
+# Fontes: normalizar
+*.cs text eol=lf
+*.xaml text eol=lf
