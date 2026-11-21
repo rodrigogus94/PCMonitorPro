@@ -67,6 +67,11 @@ public sealed class AppSettings
     public Dictionary<string, GameProfile> GameProfiles { get; set; } = new();
     public List<CustomGame> CustomGames { get; set; } = new();
 
+    // Diagnóstico: marco de comparação ("antes/depois de uma mudança") e foco escolhido
+    public DateTime? MilestoneTime { get; set; }
+    public string MilestoneNote { get; set; } = "";
+    public string DiagScenario { get; set; } = "geral";
+
     // Aparência
     public bool LightTheme { get; set; }
 

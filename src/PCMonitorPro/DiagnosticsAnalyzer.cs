@@ -36,8 +36,8 @@ public sealed class DiagnosticReport
     public Hypothesis? Top => Hypotheses.Count > 0 ? Hypotheses[0] : null;
     public string ScenarioLabel => (Diagnostics.Scenarios.TryGetValue(Scenario, out var s) ? s : Diagnostics.Scenarios["geral"]).Name;
 
-    /// <summary>Relatório em texto. <paramref name="suggestions"/> (opcional) é anexado ao final (comandos sugeridos).</summary>
-    public string ToText(string? suggestions = null)
+    /// <summary>Relatório em texto; por padrão termina com os comandos sugeridos ligados às causas prováveis.</summary>
+    public string ToText(bool includeCommands = true)
     {
         var L = new List<string> { $"RELATÓRIO DE DIAGNÓSTICO — {Created}", $"Foco: {ScenarioLabel}", "" };
         L.Add("SISTEMA"); L.AddRange(System.Select(s => "  " + s)); L.Add("");
@@ -68,7 +68,7 @@ public sealed class DiagnosticReport
         L.Add("ACHADOS DO FOCO"); Dump(Relevant);
         if (Others.Count > 0) { L.Add("OUTROS ACHADOS (fora do foco)"); Dump(Others); }
         if (CollectionErrors.Count > 0) { L.Add("AVISOS DA COLETA"); L.AddRange(CollectionErrors.Select(e => "  - " + e)); }
-        if (!string.IsNullOrWhiteSpace(suggestions)) { L.Add(""); L.Add(suggestions); }
+        if (includeCommands) { L.Add(""); L.Add(CommandSuggestions.ForReport(this)); }
         return string.Join("\n", L);
     }
 }
