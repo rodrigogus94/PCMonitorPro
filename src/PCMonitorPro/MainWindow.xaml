@@ -221,6 +221,18 @@
                                     <TextBlock Text="Rede" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </RadioButton>
+                            <RadioButton x:Name="NavDiag" Style="{StaticResource NavItem}" Tag="PageDiag" Checked="Nav_Checked">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE7BA;" FontFamily="{StaticResource Icons}" FontSize="14" Width="28" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Diagnóstico" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="NavCmds" Style="{StaticResource NavItem}" Tag="PageCmds" Checked="Nav_Checked">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE756;" FontFamily="{StaticResource Icons}" FontSize="14" Width="28" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Comandos" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </RadioButton>
                             </StackPanel>
                             <ToggleButton x:Name="GrpGames" Style="{StaticResource NavGroup}" Content="RESET JOGOS"/>
                             <StackPanel x:Name="GrpGamesItems" Margin="10,0,0,4" Visibility="{Binding IsChecked, ElementName=GrpGames, Converter={StaticResource BoolVis}}">
@@ -777,6 +789,110 @@
                         </TextBlock>
                     </StackPanel>
                 </ScrollViewer>
+
+                <!-- ===== DIAGNÓSTICO DO WINDOWS ===== -->
+                <ScrollViewer x:Name="PageDiag" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="36,30,36,30">
+                        <Grid Margin="0,0,0,20">
+                            <StackPanel Margin="0,0,180,0">
+                                <TextBlock Text="Diagnóstico" Style="{StaticResource H1}"/>
+                                <TextBlock x:Name="DiagStatus" Style="{StaticResource Sub}" TextWrapping="Wrap"
+                                           Text="Escolha o problema e clique em ANALISAR. Leva de 15 a 60 segundos e só lê informações do Windows."/>
+                            </StackPanel>
+                            <Button x:Name="BtnDiagRun" Style="{StaticResource PrimaryButton}" Content="ANALISAR" Padding="22,9"
+                                    HorizontalAlignment="Right" VerticalAlignment="Top" Click="BtnDiagRun_Click"/>
+                        </Grid>
+                        <Border x:Name="DiagCrashBanner" Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14" Visibility="Collapsed">
+                            <StackPanel>
+                                <TextBlock Text="A sessão anterior terminou de forma inesperada" FontWeight="SemiBold"/>
+                                <TextBlock x:Name="DiagCrashText" Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <TextBlock Text="O QUE ESTÁ ACONTECENDO?" Style="{StaticResource Label}" Margin="0,0,0,8"/>
+                        <WrapPanel x:Name="DiagScenarios" Margin="0,0,0,12"/>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
+                            <StackPanel>
+                                <TextBlock Text="MARCO DE COMPARAÇÃO" Style="{StaticResource Label}"/>
+                                <TextBlock x:Name="DiagMilestoneText" Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,6,0,10"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="DiagNote" Tag="O que você mudou? (ex.: EXPO desativado)" MaxLength="80"/>
+                                    <Button Grid.Column="1" Style="{StaticResource OutlineButton}" Content="MARCAR MUDANÇA" Padding="16,8" Margin="10,0,0,0" Click="BtnDiagMark_Click"/>
+                                    <Button Grid.Column="2" Style="{StaticResource OutlineButton}" Content="LIMPAR" Padding="16,8" Margin="8,0,0,0" Click="BtnDiagUnmark_Click"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                        <TextBox x:Name="DiagReport" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" Height="460"
+                                 VerticalScrollBarVisibility="Auto" FontFamily="{StaticResource Mono}" FontSize="12"/>
+                        <WrapPanel Margin="0,12,0,0">
+                            <Button x:Name="BtnDiagCopy" Style="{StaticResource OutlineButton}" Content="COPIAR RELATÓRIO" Padding="16,8" Margin="0,0,8,8" IsEnabled="False" Click="BtnDiagCopy_Click"/>
+                            <Button x:Name="BtnDiagSave" Style="{StaticResource OutlineButton}" Content="SALVAR EM DOCUMENTOS" Padding="16,8" Margin="0,0,8,8" IsEnabled="False" Click="BtnDiagSave_Click"/>
+                            <Button Style="{StaticResource OutlineButton}" Content="ABRIR HISTÓRICO" Padding="16,8" Margin="0,0,8,8" Click="BtnDiagHistory_Click"/>
+                            <Button Style="{StaticResource OutlineButton}" Content="ABRIR LOG" Padding="16,8" Margin="0,0,8,8" Click="BtnOpenLog_Click"/>
+                        </WrapPanel>
+                        <TextBlock Foreground="{DynamicResource Faint}" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0">
+                            A coleta lê eventos, discos, rede e desempenho pelo PowerShell do Windows e testa a rede com pings ao roteador e a 1.1.1.1 / 8.8.8.8.
+                            Nada é enviado para fora do PC. O relatório é uma hipótese: confirme antes de trocar peças.
+                        </TextBlock>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- ===== COMANDOS SUGERIDOS ===== -->
+                <Grid x:Name="PageCmds" Margin="36,30,36,30" Visibility="Collapsed">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Margin="0,0,0,12">
+                        <TextBlock Text="Comandos" Style="{StaticResource H1}"/>
+                        <TextBlock x:Name="CmdContext" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <Border Grid.Row="1" Style="{StaticResource CardBorder}" Margin="0,0,0,14" Padding="16,12">
+                        <StackPanel>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource Muted}">
+                                Nenhum comando roda sozinho: você lê, copia ou escolhe executar aqui, um por vez, com confirmação.
+                                Os marcados com ⚠ alteram o sistema. Você pode editar o texto antes de copiar ou executar.
+                            </TextBlock>
+                            <CheckBox x:Name="CmdShowAll" Content="Mostrar todos os comandos" Margin="0,10,0,0" Checked="CmdShowAll_Changed" Unchecked="CmdShowAll_Changed"/>
+                        </StackPanel>
+                    </Border>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="340"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <ListBox x:Name="CmdList" SelectionChanged="CmdList_Changed" ItemContainerStyle="{StaticResource ListNavItem}"/>
+                        <Grid Grid.Column="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel>
+                                <TextBlock x:Name="CmdTitle" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                <TextBlock x:Name="CmdDesc" Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                <TextBlock x:Name="CmdBadge" TextWrapping="Wrap" Margin="0,6,0,10"/>
+                            </StackPanel>
+                            <TextBox x:Name="CmdText" Grid.Row="1" AcceptsReturn="True" TextWrapping="Wrap" Height="110"
+                                     VerticalScrollBarVisibility="Auto" FontFamily="{StaticResource Mono}" FontSize="12"/>
+                            <WrapPanel Grid.Row="2" Margin="0,10,0,10">
+                                <Button Style="{StaticResource OutlineButton}" Content="COPIAR COMANDO" Padding="16,8" Margin="0,0,8,0" Click="BtnCmdCopy_Click"/>
+                                <Button x:Name="BtnCmdRun" Style="{StaticResource PrimaryButton}" Content="EXECUTAR AQUI…" Padding="16,8" Margin="0,0,8,0" Click="BtnCmdRun_Click"/>
+                                <Button x:Name="BtnCmdStop" Style="{StaticResource OutlineButton}" Content="CANCELAR" Padding="16,8" IsEnabled="False" Click="BtnCmdStop_Click"/>
+                            </WrapPanel>
+                            <TextBox x:Name="CmdOutput" Grid.Row="3" IsReadOnly="True" AcceptsReturn="True" TextWrapping="NoWrap" MinHeight="160"
+                                     VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" FontFamily="{StaticResource Mono}" FontSize="11"
+                                     Tag="A saída aparece aqui, só depois que você escolher executar."/>
+                        </Grid>
+                    </Grid>
+                </Grid>
 
                 <!-- ===== RESET DRIVER ===== -->
                 <ScrollViewer x:Name="PageDriver" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">

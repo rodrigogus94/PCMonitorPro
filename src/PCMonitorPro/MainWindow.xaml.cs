@@ -108,6 +108,7 @@ public partial class MainWindow : Window
             // por um instante e aparecia como engasgo no 1% low do benchmark.
             if (_gpuBenchActive) return;
             _monitor.Refresh();
+            _recorder?.Tick(_monitor);
             if (_monitor.IsOpen) StatusText.Text = $"{_monitor.Rows.Count} sensores · atualizado {DateTime.Now:HH:mm:ss}";
             UpdateStressPanel();
             UpdateGpuLive();
@@ -136,6 +137,8 @@ public partial class MainWindow : Window
             UnregisterHotKey(new System.Windows.Interop.WindowInteropHelper(this).Handle, HotkeyId);
             ShutdownInteg();
             _launchCts?.Cancel();
+            _diagCts?.Cancel(); _cmdCts?.Cancel(); DiagnosticsCollector.Cancel(); CommandRunner.Cancel();
+            _recorder?.Dispose();   // grava a marca de fim normal
             _monitor.Dispose();
         };
     }
@@ -160,6 +163,7 @@ public partial class MainWindow : Window
             try { await _monitor.OpenAsync(); }
             catch (Exception ex) { StatusText.Text = $"Sensores indisponíveis: {ex.Message}"; return; }
             _monitor.Refresh();
+            StartHistory();
             UpdateCpuSensorWarning();
             AddChip("Todos", null, isChecked: true);
             foreach (var c in _monitor.Rows.Select(r => r.Category).Distinct().OrderBy(x => x))
@@ -271,6 +275,8 @@ public partial class MainWindow : Window
             case "PageDash": UpdateDashboard(); break;
             case "PageDisks": RefreshDiskHealth(); break;
             case "PageEnergy": RefreshEnergy(); break;
+            case "PageDiag": InitDiag(); break;
+            case "PageCmds": RefreshCommands(); break;
             case "PageOc": UpdateOcGpuState(); UpdateRecentErrors(); break;
             case "PageInteg": InitInteg(); break;
             case "PageLauncher": InitLauncher(); break;
@@ -285,7 +291,7 @@ public partial class MainWindow : Window
 
     private void ShowPage(string name)
     {
-        foreach (var p in new FrameworkElement[] { PageDash, PageSystem, PageSensors, PageGpu, PageGames, PageBottleneck, PageOverlay, PageBench, PageOptimize, PageOc, PageInteg, PageLauncher, PageDriver, PageStartup, PageApps, PageMakerPorts, PageMakerDrv, PageDisks, PageEnergy, PageNet, PageStress })
+        foreach (var p in new FrameworkElement[] { PageDash, PageSystem, PageSensors, PageGpu, PageGames, PageBottleneck, PageOverlay, PageBench, PageOptimize, PageOc, PageInteg, PageLauncher, PageDriver, PageStartup, PageApps, PageMakerPorts, PageMakerDrv, PageDisks, PageEnergy, PageNet, PageDiag, PageCmds, PageStress })
             p.Visibility = p.Name == name ? Visibility.Visible : Visibility.Collapsed;
     }
 

@@ -5,7 +5,7 @@ Junta o **RESET EXPLODE** (MIT, de GustavoReset) com o **PC Monitor** (widgets, 
 com correções de segurança e de bugs. Veja [NOTICE.md](NOTICE.md) para a origem e as licenças.
 
 > **Estado atual: fase 1 concluída** — base do RESET EXPLODE renomeada + correções de segurança/bugs + testes + CI.
-> **Fase 2 (em andamento):** portar os recursos do PC Monitor (lista abaixo). Eles ainda **não** estão no programa.
+> **Fase 2 (em andamento):** histórico, diagnóstico, marco e comandos já estão no programa (páginas **Diagnóstico** e **Comandos**); faltam widgets flutuantes, alertas na bandeja e iniciar com o Windows.
 
 ## O que já existe (vindo do RESET EXPLODE)
 - **Sistema**: SO, placa-mãe/BIOS, CPU, RAM por módulo, GPU (estilo GPU-Z), discos e S.M.A.R.T., energia/bateria, rede (latência, perda, bufferbloat), relatório HTML/JSON.
@@ -17,13 +17,13 @@ com correções de segurança e de bugs. Veja [NOTICE.md](NOTICE.md) para a orig
 
 ## A portar do PC Monitor (fase 2)
 - [ ] Widgets flutuantes configuráveis (várias janelas, cantos magnéticos, cores, opacidade, clique atravessa)
-- [ ] Histórico em arquivo com detecção de queda (sessão sem marca de fim normal) e resumo dos últimos valores
+- [x] Histórico em arquivo com detecção de queda (sessão sem marca de fim normal) e resumo dos últimos valores
 - [ ] Alertas de temperatura e RAM na bandeja (com cooldown)
-- [ ] Diagnóstico do Windows por cenário (tela azul, lentidão, calor, disco, rede, vídeo, update), com causa mais provável, evidências e passos
-- [ ] Marco de comparação (antes/depois de uma mudança) e relatório automático em `Documentos\PCMonitor`
-- [ ] Comandos sugeridos de PowerShell (copiar ou executar com confirmação) e ferramentas SFC/DISM/CHKDSK
+- [x] Diagnóstico do Windows por cenário (tela azul, lentidão, calor, disco, rede, vídeo, update), com causa mais provável, evidências e passos
+- [x] Marco de comparação (antes/depois de uma mudança) e relatório automático em `Documentos\PCMonitor`
+- [x] Comandos sugeridos de PowerShell (copiar ou executar com confirmação)
 - [ ] Iniciar com o Windows (Agendador de Tarefas elevado, com verificação da pasta)
-- [ ] Botão "Abrir log"
+- [x] Botão "Abrir log" (página Diagnóstico)
 
 ## Correções de segurança e bugs (fase 1)
 | Problema no original | Correção |
