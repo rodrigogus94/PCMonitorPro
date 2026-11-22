@@ -10,13 +10,13 @@ public class AutoStartTests
     [Fact]
     public void TaskXml_runs_elevated_without_time_limit_or_battery_stop()
     {
-        var x = XDocument.Parse(AutoStart.BuildTaskXml(@"C:\Program Files\PCMonitorPro\PCMonitorPro.exe", @"PC\Rodri"));
+        var x = XDocument.Parse(AutoStart.BuildTaskXml(@"C:\Program Files\PCMonitorPro\PCMonitorPro.exe", @"PC\usuario"));
         Assert.Equal("HighestAvailable", x.Descendants(Ns + "RunLevel").Single().Value);
         Assert.Equal("InteractiveToken", x.Descendants(Ns + "LogonType").Single().Value);
         Assert.Equal("PT0S", x.Descendants(Ns + "ExecutionTimeLimit").Single().Value);
         Assert.Equal("false", x.Descendants(Ns + "DisallowStartIfOnBatteries").Single().Value);
         Assert.Equal("false", x.Descendants(Ns + "StopIfGoingOnBatteries").Single().Value);
-        Assert.Equal(@"PC\Rodri", x.Descendants(Ns + "LogonTrigger").Elements(Ns + "UserId").Single().Value);
+        Assert.Equal(@"PC\usuario", x.Descendants(Ns + "LogonTrigger").Elements(Ns + "UserId").Single().Value);
         Assert.Equal(@"C:\Program Files\PCMonitorPro", x.Descendants(Ns + "WorkingDirectory").Single().Value);
     }
 
@@ -24,7 +24,7 @@ public class AutoStartTests
     public void TaskXml_escapes_special_characters_in_path()
     {
         const string exe = @"C:\Tools & More\<app>\PCMonitorPro.exe";
-        var xml = AutoStart.BuildTaskXml(exe, @"PC\Rodri");
+        var xml = AutoStart.BuildTaskXml(exe, @"PC\usuario");
         Assert.DoesNotContain("<app>", xml);
         Assert.Equal(exe, AutoStart.ParseCommand(xml));
     }
