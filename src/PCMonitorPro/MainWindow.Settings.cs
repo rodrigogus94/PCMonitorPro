@@ -18,6 +18,7 @@ public partial class MainWindow
 
     private void InitSettings()
     {
+        RefreshGoogleUi();
         LoadAlertUi();
         _ = LoadAutoStartUi();
         _setLoading = true;
@@ -157,6 +158,12 @@ public partial class MainWindow
             ProfileStatus.Text = "Não foi possível ler o arquivo: " + ex.Message;
             return;
         }
+        ImportProfile(file);
+    }
+
+    /// <summary>Pergunta o que importar de um perfil já lido (de arquivo ou do Google) e aplica.</summary>
+    private void ImportProfile(ProfileFile file)
+    {
         var avail = ProfileTransfer.Available(file);
         if (avail.Count == 0) { ProfileStatus.Text = "Este perfil não tem nenhuma parte para importar."; return; }
 

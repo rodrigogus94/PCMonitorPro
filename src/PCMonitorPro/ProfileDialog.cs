@@ -60,3 +60,36 @@ public sealed class ProfileDialog : Window
         return d.ShowDialog() == true ? (d.Chosen, d.ExtraChecked) : null;
     }
 }
+
+/// <summary>Janela simples para escolher um item de uma lista (por exemplo, o computador cujo perfil baixar).</summary>
+public static class ChoiceDialog
+{
+    /// <summary>Índice escolhido, ou null se cancelou.</summary>
+    public static int? Ask(Window? owner, string title, string intro, IReadOnlyList<string> items)
+    {
+        var win = new Window
+        {
+            Title = title, Width = 520, SizeToContent = SizeToContent.Height, MaxHeight = 560, Owner = owner, ShowInTaskbar = false,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner, ResizeMode = ResizeMode.NoResize,
+            FontFamily = new System.Windows.Media.FontFamily("Segoe UI Variable Text, Segoe UI"), FontSize = 13,
+        };
+        win.SetResourceReference(Window.BackgroundProperty, "Bg"); win.SetResourceReference(Window.ForegroundProperty, "Fg");
+        var root = new StackPanel { Margin = new Thickness(24, 20, 24, 20) };
+        var text = new TextBlock { Text = intro, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 12) };
+        text.SetResourceReference(TextBlock.ForegroundProperty, "Muted");
+        var list = new ListBox { MaxHeight = 300 };
+        foreach (var i in items) list.Items.Add(i);
+        list.SelectedIndex = 0;
+        var ok = new Button { Content = "ESCOLHER", Padding = new Thickness(20, 9, 20, 9), Margin = new Thickness(0, 0, 8, 0), IsDefault = true };
+        var cancel = new Button { Content = "CANCELAR", Padding = new Thickness(20, 9, 20, 9), IsCancel = true };
+        if (win.TryFindResource("PrimaryButton") is Style pb) ok.Style = pb;
+        if (win.TryFindResource("OutlineButton") is Style ob) cancel.Style = ob;
+        ok.Click += (_, _) => { if (list.SelectedIndex >= 0) win.DialogResult = true; };
+        list.MouseDoubleClick += (_, _) => { if (list.SelectedIndex >= 0) win.DialogResult = true; };
+        var buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 18, 0, 0) };
+        buttons.Children.Add(ok); buttons.Children.Add(cancel);
+        root.Children.Add(text); root.Children.Add(list); root.Children.Add(buttons);
+        win.Content = root;
+        return win.ShowDialog() == true ? list.SelectedIndex : null;
+    }
+}

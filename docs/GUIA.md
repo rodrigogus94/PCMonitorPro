@@ -67,6 +67,8 @@ Limitação: sobre jogos em **tela cheia exclusiva** os widgets podem não apare
   **substitui** o atual, exceto os benchmarks, que são **somados** (sem repetir). O nome do computador no arquivo é opcional.
   **Nunca vão no arquivo:** chave da API, backups do Windows (restaurar originais), perfis e programas dos jogos (caminhos e
   comandos) e a pasta dos relatórios. Um perfil de fora é tratado como não confiável: tamanho limitado e valores validados.
+- **Sincronizar com o Google (opcional):** envia o perfil de cada computador para uma pasta oculta do aplicativo no seu Google
+  Drive e deixa baixar o de outro PC. Exige uma configuração única no Google Cloud; veja o [passo a passo](GOOGLE.md).
 - **Histórico de sensores:** liga/desliga a gravação e define por quantos dias guardar (padrão 14). Vale na próxima abertura.
 - **Cores dos widgets:** limites de amarelo e vermelho para temperatura e porcentagem.
 - **Relatórios:** pasta onde o diagnóstico é salvo.

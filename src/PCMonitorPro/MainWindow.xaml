@@ -960,6 +960,34 @@
                         </Border>
                         <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
                             <StackPanel>
+                                <TextBlock Text="SINCRONIZAR COM O GOOGLE (OPCIONAL)" Style="{StaticResource Label}"/>
+                                <TextBlock Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,6,0,10"
+                                           Text="Guarda o perfil de cada computador na sua conta do Google, numa pasta oculta do aplicativo no Drive: o programa não vê nenhum outro arquivo seu. Nada é enviado sem você clicar. O nome deste computador aparece na lista para você reconhecê-lo. O programa funciona normalmente sem isso."/>
+                                <TextBlock x:Name="GoogleStatus" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                                <WrapPanel>
+                                    <Button x:Name="GoogleConnectBtn" Style="{StaticResource PrimaryButton}" Content="CONECTAR" Padding="14,7" Margin="0,0,8,8" Click="BtnGoogleConnect_Click"/>
+                                    <Button x:Name="GoogleUploadBtn" Style="{StaticResource OutlineButton}" Content="ENVIAR PERFIL DESTE PC…" Padding="14,7" Margin="0,0,8,8" Click="BtnGoogleUpload_Click"/>
+                                    <Button x:Name="GoogleDownloadBtn" Style="{StaticResource OutlineButton}" Content="BAIXAR PERFIL…" Padding="14,7" Margin="0,0,8,8" Click="BtnGoogleDownload_Click"/>
+                                    <Button x:Name="GoogleDeleteBtn" Style="{StaticResource OutlineButton}" Content="APAGAR DESTE PC DA NUVEM" Padding="14,7" Margin="0,0,8,8" Click="BtnGoogleDelete_Click"/>
+                                    <Button x:Name="GoogleDisconnectBtn" Style="{StaticResource OutlineButton}" Content="DESCONECTAR" Padding="14,7" Margin="0,0,8,8" Click="BtnGoogleDisconnect_Click"/>
+                                </WrapPanel>
+                                <TextBlock Text="CONFIGURAÇÃO DE ACESSO (uma vez)" Style="{StaticResource Label}" Margin="0,10,0,6"/>
+                                <TextBlock Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,0,0,8"
+                                           Text="É preciso um ID de cliente do Google (grátis), criado no Google Cloud. O passo a passo está no guia. Cole o ID na caixa da esquerda e o segredo na da direita; o segredo fica cifrado neste Windows."/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="GoogleClientIdBox" Tag="ID do cliente (termina em .apps.googleusercontent.com)" LostFocus="GoogleClient_Changed"/>
+                                    <PasswordBox x:Name="GoogleClientSecretBox" Grid.Column="2" ToolTip="Segredo do cliente" LostFocus="GoogleClient_Changed"/>
+                                </Grid>
+                                <Button Style="{StaticResource OutlineButton}" Content="ABRIR O GUIA" Padding="14,7" Margin="0,10,0,0" HorizontalAlignment="Left" Click="BtnGoogleGuide_Click"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
+                            <StackPanel>
                                 <TextBlock Text="HISTÓRICO DE SENSORES" Style="{StaticResource Label}"/>
                                 <TextBlock Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,6,0,10"
                                            Text="Grava temperatura, uso e RAM a cada 5 segundos. Se o PC cair (tela azul, reinício seco), a próxima abertura mostra os últimos valores. Vale na próxima vez que abrir o programa."/>

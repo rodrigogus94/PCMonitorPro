@@ -284,4 +284,36 @@ public class UiSmokeTests : IDisposable
             finally { w.Close(); }
         });
     }
+
+    [Fact]
+    public void GoogleCard_ReflectsConfigurationState()
+    {
+        RunSta(() =>
+        {
+            EnsureApp();
+            var w = new MainWindow();
+            try
+            {
+                var settings = Field<AppSettings>(w, "_settings");
+                Call(w, "InitSettings");
+                Assert.Contains("Não configurado", Field<TextBlock>(w, "GoogleStatus").Text);
+                Assert.False(Field<Button>(w, "GoogleConnectBtn").IsEnabled);
+                Assert.False(Field<Button>(w, "GoogleUploadBtn").IsEnabled);
+
+                settings.GoogleClientId = "abc.apps.googleusercontent.com";
+                Call(w, "InitSettings");
+                Assert.Contains("Pronto para conectar", Field<TextBlock>(w, "GoogleStatus").Text);
+                Assert.True(Field<Button>(w, "GoogleConnectBtn").IsEnabled);
+                Assert.False(Field<Button>(w, "GoogleDisconnectBtn").IsEnabled);
+
+                settings.GoogleRefreshToken = "rt"; settings.GoogleEmail = "a@b.com";
+                Call(w, "InitSettings");
+                Assert.Contains("Conectado como a@b.com", Field<TextBlock>(w, "GoogleStatus").Text);
+                Assert.False(Field<Button>(w, "GoogleConnectBtn").IsEnabled);
+                Assert.True(Field<Button>(w, "GoogleUploadBtn").IsEnabled);
+                Assert.True(Field<Button>(w, "GoogleDisconnectBtn").IsEnabled);
+            }
+            finally { w.Close(); }
+        });
+    }
 }

@@ -72,6 +72,31 @@ public sealed class AppSettings
     public string MilestoneNote { get; set; } = "";
     public string DiagScenario { get; set; } = "geral";
 
+    // Sincronização com o Google (opcional). Tokens e segredo ficam cifrados com DPAPI; nunca vão no perfil exportado.
+    public string? GoogleClientId { get; set; }
+    public string? GoogleClientSecretProtected { get; set; }
+    public string? GoogleRefreshTokenProtected { get; set; }
+    public string? GoogleEmail { get; set; }
+    /// <summary>Identificador deste computador na nuvem (aleatório; não é o nome da máquina).</summary>
+    public string? MachineId { get; set; }
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    public string? GoogleClientSecret { get => Unprotect(GoogleClientSecretProtected); set => GoogleClientSecretProtected = Protect(value); }
+    [System.Text.Json.Serialization.JsonIgnore]
+    public string? GoogleRefreshToken { get => Unprotect(GoogleRefreshTokenProtected); set => GoogleRefreshTokenProtected = Protect(value); }
+
+    public string EnsureMachineId() => MachineId ??= Guid.NewGuid().ToString("N");
+
+    internal static string? Protect(string? v) => string.IsNullOrWhiteSpace(v) ? null
+        : Convert.ToBase64String(ProtectedData.Protect(Encoding.UTF8.GetBytes(v.Trim()), null, DataProtectionScope.CurrentUser));
+
+    internal static string? Unprotect(string? v)
+    {
+        if (string.IsNullOrEmpty(v)) return null;
+        try { return Encoding.UTF8.GetString(ProtectedData.Unprotect(Convert.FromBase64String(v), null, DataProtectionScope.CurrentUser)); }
+        catch { return null; }
+    }
+
     // Bandeja: fechar a janela mantém o programa rodando (widgets, histórico e alertas)
     public bool CloseToTray { get; set; }
     public bool TrayHintShown { get; set; }
