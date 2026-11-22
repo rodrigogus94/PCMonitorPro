@@ -26,4 +26,4 @@ jobs:
         run: dotnet build PCMonitorPro.sln -c Release --no-restore -nologo
 
       - name: Testes
-        run: dotnet test PCMonitorPro.sln -c Release --no-build -nologo
+        run: dotnet test PCMonitorPro.sln -c Release --no-build -nologo --logger GitHubActions
