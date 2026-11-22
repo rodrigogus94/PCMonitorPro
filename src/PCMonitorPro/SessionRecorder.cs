@@ -20,6 +20,9 @@ public static class HistorySampler
 
     private static bool IsGpu(HardwareType t) => t is HardwareType.GpuNvidia or HardwareType.GpuAmd or HardwareType.GpuIntel;
 
+    public static float? RamPercent(SensorMonitor m) =>
+        m.Rows.FirstOrDefault(r => r.HardwareType == HardwareType.Memory && r.Type == SensorType.Load && r.Name == "Memory")?.RawValue;
+
     public static Dictionary<string, object?> Sample(SensorMonitor m, string? topProc)
     {
         var rows = m.Rows.ToList();
@@ -32,7 +35,7 @@ public static class HistorySampler
             ["cpu.temp"] = m.CpuTemperature,
             ["cpu.load"] = m.CpuLoad,
             ["cpu.power"] = m.CpuPower,
-            ["ram.pct"] = rows.FirstOrDefault(r => r.HardwareType == HardwareType.Memory && r.Type == SensorType.Load && r.Name == "Memory")?.RawValue,
+            ["ram.pct"] = RamPercent(m),
             ["nv0.temp"] = Gpu(SensorType.Temperature),
             ["nv0.load"] = Gpu(SensorType.Load),
             ["proc.top"] = topProc,

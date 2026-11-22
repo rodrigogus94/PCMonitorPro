@@ -68,6 +68,10 @@ public class UiSmokeTests : IDisposable
                 Assert.Equal(Diagnostics.Scenarios.Count, chips.Children.Count);
                 Assert.Contains("Nenhum marco", Field<TextBlock>(w, "DiagMilestoneText").Text);
 
+                Assert.True(Field<CheckBox>(w, "AlertEnabled").IsChecked);
+                Assert.Equal("90", Field<TextBox>(w, "AlertTemp").Text);
+                Assert.Equal("95", Field<TextBox>(w, "AlertRam").Text);
+
                 Call(w, "RefreshCommands");
                 var list = Field<ListBox>(w, "CmdList");
                 Assert.True(list.Items.Count > 10);

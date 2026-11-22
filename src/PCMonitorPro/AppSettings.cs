@@ -72,6 +72,12 @@ public sealed class AppSettings
     public string MilestoneNote { get; set; } = "";
     public string DiagScenario { get; set; } = "geral";
 
+    // Alertas de temperatura/RAM (aviso no canto da tela, com cooldown por sensor)
+    public bool AlertsEnabled { get; set; } = true;
+    public int AlertTempC { get; set; } = 90;
+    public int AlertRamPct { get; set; } = 95;
+    public int AlertCooldownS { get; set; } = 300;
+
     // Aparência
     public bool LightTheme { get; set; }
 

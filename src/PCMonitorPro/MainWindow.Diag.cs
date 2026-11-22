@@ -32,7 +32,7 @@ public partial class MainWindow
             _crashText = $"A sessão iniciada em {prev.Start:dd/MM HH:mm} parou de gravar às {prev.Last}, sem o fim normal. " +
                          "Pode ter sido tela azul, queda de energia, reinício seco ou o programa fechado à força." +
                          (detail != "" ? $"\nÚltimos valores gravados: {detail}." : "");
-            Toast("Sessão anterior terminou de forma inesperada", $"Parou às {prev.Last}. Abra Diagnóstico para investigar.", "");
+            Toast("Sessão anterior terminou de forma inesperada", $"Parou às {prev.Last}. Abra Diagnóstico para investigar.", "");
             ShowCrashBanner();
         }
         catch (Exception ex) { AppLog.Warn("Histórico: falha ao iniciar", ex); }
@@ -66,6 +66,44 @@ public partial class MainWindow
         }
         ShowCrashBanner();
         ShowMilestone();
+        LoadAlertUi();
+    }
+
+    // ================= Alertas de temperatura e RAM =================
+
+    private readonly AlertMonitor _alerts = new();
+    private bool _alertLoading;
+
+    private void LoadAlertUi()
+    {
+        _alertLoading = true;
+        AlertEnabled.IsChecked = _settings.AlertsEnabled;
+        AlertTemp.Text = _settings.AlertTempC.ToString();
+        AlertRam.Text = _settings.AlertRamPct.ToString();
+        _alertLoading = false;
+    }
+
+    private void AlertSettings_Changed(object sender, RoutedEventArgs e)
+    {
+        if (_alertLoading) return;
+        _settings.AlertsEnabled = AlertEnabled.IsChecked == true;
+        // valor inválido volta para o último bom, em vez de gravar lixo
+        _settings.AlertTempC = int.TryParse(AlertTemp.Text, out var t) ? Math.Clamp(t, 50, 120) : _settings.AlertTempC;
+        _settings.AlertRamPct = int.TryParse(AlertRam.Text, out var r) ? Math.Clamp(r, 50, 100) : _settings.AlertRamPct;
+        _settings.Save();
+        LoadAlertUi();
+    }
+
+    /// <summary>Chamado a cada segundo: avisa no canto da tela se algum limite foi passado (respeita o cooldown).</summary>
+    private void CheckAlerts()
+    {
+        if (!_settings.AlertsEnabled || !_monitor.IsOpen || AnyBenchRunning) return;
+        try
+        {
+            var lines = _alerts.Evaluate(_settings, AlertMonitor.TempsFrom(_monitor), HistorySampler.RamPercent(_monitor), DateTime.Now);
+            if (lines.Count > 0) Toast("Alerta do PC", AlertMonitor.Format(lines), "");
+        }
+        catch (Exception ex) { AppLog.Debug(ex); }
     }
 
     private void ShowMilestone()

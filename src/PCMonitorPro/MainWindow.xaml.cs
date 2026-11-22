@@ -109,6 +109,7 @@ public partial class MainWindow : Window
             if (_gpuBenchActive) return;
             _monitor.Refresh();
             _recorder?.Tick(_monitor);
+            CheckAlerts();
             if (_monitor.IsOpen) StatusText.Text = $"{_monitor.Rows.Count} sensores · atualizado {DateTime.Now:HH:mm:ss}";
             UpdateStressPanel();
             UpdateGpuLive();

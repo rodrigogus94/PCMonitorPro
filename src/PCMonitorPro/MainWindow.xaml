@@ -826,6 +826,23 @@
                                 </Grid>
                             </StackPanel>
                         </Border>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
+                            <StackPanel>
+                                <TextBlock Text="ALERTAS DE TEMPERATURA E RAM" Style="{StaticResource Label}"/>
+                                <TextBlock Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,6,0,10"
+                                           Text="Mostra um aviso no canto da tela (sem tirar o foco do jogo) quando passar do limite. O mesmo sensor só avisa de novo depois de 5 minutos."/>
+                                <WrapPanel VerticalAlignment="Center">
+                                    <CheckBox x:Name="AlertEnabled" Content="Avisar" VerticalAlignment="Center" Margin="0,0,20,0"
+                                              Checked="AlertSettings_Changed" Unchecked="AlertSettings_Changed"/>
+                                    <TextBlock Text="Temperatura a partir de" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <TextBox x:Name="AlertTemp" Width="56" MaxLength="3" ToolTip="Entre 50 e 120 °C" LostFocus="AlertSettings_Changed"/>
+                                    <TextBlock Text="°C" VerticalAlignment="Center" Margin="6,0,20,0"/>
+                                    <TextBlock Text="RAM a partir de" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <TextBox x:Name="AlertRam" Width="56" MaxLength="3" ToolTip="Entre 50 e 100 %" LostFocus="AlertSettings_Changed"/>
+                                    <TextBlock Text="%" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
                         <TextBox x:Name="DiagReport" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" Height="460"
                                  VerticalScrollBarVisibility="Auto" FontFamily="{StaticResource Mono}" FontSize="12"/>
                         <WrapPanel Margin="0,12,0,0">
