@@ -78,8 +78,21 @@ public static class ProcessLauncher
             string cmd = $"\"{file}\"" + (string.IsNullOrWhiteSpace(args) ? "" : " " + args);
             string? cwd = string.IsNullOrEmpty(workDir) ? null : workDir;
             if (!CreateProcessWithTokenW(hPrimary, 0, null, cmd, 0, IntPtr.Zero, cwd, ref si, out var pi)) throw new Win32Exception();
-            CloseHandle(pi.hThread); CloseHandle(pi.hProcess);
-            try { return Process.GetProcessById(pi.dwProcessId); } catch (ArgumentException) { return null; }
+            CloseHandle(pi.hThread);
+            try
+            {
+                // O Process do .NET precisa do próprio handle ANTES de soltarmos o nosso. Se o programa terminar logo
+                // (comandos rápidos), abrir o handle depois deixa ExitCode ilegível ("não foi iniciado por este objeto").
+                var p = Process.GetProcessById(pi.dwProcessId);
+                _ = p.SafeHandle;
+                return p;
+            }
+            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or Win32Exception)
+            {
+                AppLog.Debug(ex);
+                return null;
+            }
+            finally { CloseHandle(pi.hProcess); }
         }
         finally
         {
