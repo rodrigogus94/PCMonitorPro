@@ -21,6 +21,7 @@ public partial class MainWindow
         LoadAlertUi();
         _ = LoadAutoStartUi();
         _setLoading = true;
+        CloseToTrayCheck.IsChecked = _settings.CloseToTray;
         HistEnabled.IsChecked = _settings.HistoryEnabled;
         HistDays.Text = _settings.HistoryKeepDays.ToString();
         LimTempWarn.Text = WidgetFormat.TempWarn.ToString("0"); LimTempBad.Text = WidgetFormat.TempBad.ToString("0");
@@ -29,6 +30,13 @@ public partial class MainWindow
         ShowReportFolder();
         AboutText.Text = $"PC Monitor Pro v{AppVersion}\nDados e log: {AppSettings.Folder}\n" +
                          "Baseado no RESET EXPLODE (licença MIT) e no PC Monitor. Veja o NOTICE.md para as licenças.";
+    }
+
+    private void SetTray_Changed(object sender, RoutedEventArgs e)
+    {
+        if (_setLoading) return;
+        _settings.CloseToTray = CloseToTrayCheck.IsChecked == true;
+        _settings.Save();
     }
 
     private void SetHistory_Changed(object sender, RoutedEventArgs e)

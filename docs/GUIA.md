@@ -58,6 +58,9 @@ Limitação: sobre jogos em **tela cheia exclusiva** os widgets podem não apare
 - **Iniciar com o Windows:** cria uma tarefa do Agendador que abre o programa, já como administrador, ao entrar no Windows.
   Por segurança, **só ativa** se o `.exe` e a pasta dele não puderem ser alterados por programas comuns (por exemplo, instalado
   em `C:\Program Files`). Sem essa regra, qualquer programa poderia trocar o arquivo e virar administrador.
+- **Bandeja do sistema:** o ícone fica ao lado do relógio (duplo clique abre, botão direito tem *Abrir* e *Sair*). Com a opção
+  *Ao fechar a janela, continuar na bandeja* ligada, fechar a janela só a esconde: widgets, histórico e alertas continuam. Com
+  *Iniciar com o Windows* ligado, o programa abre direto na bandeja. Abrir o programa de novo traz a janela de volta.
 - **Histórico de sensores:** liga/desliga a gravação e define por quantos dias guardar (padrão 14). Vale na próxima abertura.
 - **Cores dos widgets:** limites de amarelo e vermelho para temperatura e porcentagem.
 - **Relatórios:** pasta onde o diagnóstico é salvo.

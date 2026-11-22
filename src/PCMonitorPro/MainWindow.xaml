@@ -940,6 +940,14 @@
                         </Border>
                         <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
                             <StackPanel>
+                                <TextBlock Text="BANDEJA DO SISTEMA" Style="{StaticResource Label}"/>
+                                <TextBlock Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,6,0,10"
+                                           Text="O ícone fica ao lado do relógio. Com a opção ligada, fechar a janela não encerra o programa: widgets, histórico e alertas continuam. Para sair de vez, use o botão direito no ícone e Sair. Com Iniciar com o Windows ligado, o programa abre direto na bandeja."/>
+                                <CheckBox x:Name="CloseToTrayCheck" Content="Ao fechar a janela, continuar na bandeja" Checked="SetTray_Changed" Unchecked="SetTray_Changed"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
+                            <StackPanel>
                                 <TextBlock Text="HISTÓRICO DE SENSORES" Style="{StaticResource Label}"/>
                                 <TextBlock Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,6,0,10"
                                            Text="Grava temperatura, uso e RAM a cada 5 segundos. Se o PC cair (tela azul, reinício seco), a próxima abertura mostra os últimos valores. Vale na próxima vez que abrir o programa."/>

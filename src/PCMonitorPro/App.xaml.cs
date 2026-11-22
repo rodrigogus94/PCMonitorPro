@@ -8,6 +8,8 @@ public partial class App : Application
 {
     // Uma única instância: abrir o PC Monitor Pro de novo só traz a janela que já está aberta para a frente.
     private static Mutex? _single;
+    private const string ShowEventName = @"Local\PCMonitorPro.Show";
+    private static EventWaitHandle? _showEvent;
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern IntPtr FindWindow(string? cls, string title);
     [DllImport("user32.dll")] private static extern bool ShowWindow(IntPtr h, int cmd);
@@ -24,6 +26,9 @@ public partial class App : Application
 
         if (!first)
         {
+            // Pede à instância que já roda para aparecer (ela pode estar escondida na bandeja, onde FindWindow não ajuda).
+            try { using var ev = EventWaitHandle.OpenExisting(ShowEventName); ev.Set(); Shutdown(); return; }
+            catch (Exception ex) when (ex is WaitHandleCannotBeOpenedException or UnauthorizedAccessException) { }
             IntPtr h = FindWindow(null, "PC Monitor Pro");
             if (h != IntPtr.Zero)
             {
@@ -34,6 +39,27 @@ public partial class App : Application
             return;
         }
         base.OnStartup(e);
+        ListenForSecondInstance();
         new MainWindow().Show();
+    }
+
+    /// <summary>Uma segunda abertura do programa sinaliza este evento; a janela volta a aparecer.</summary>
+    private void ListenForSecondInstance()
+    {
+        try
+        {
+            _showEvent = new EventWaitHandle(false, EventResetMode.AutoReset, ShowEventName);
+            var ev = _showEvent;
+            new Thread(() =>
+            {
+                while (ev.WaitOne())
+                {
+                    var app = Current;
+                    if (app == null) break;
+                    app.Dispatcher.BeginInvoke(new Action(() => (app.MainWindow as MainWindow)?.ShowFromTray()));
+                }
+            }) { IsBackground = true, Name = "segunda-instancia" }.Start();
+        }
+        catch (Exception ex) { AppLog.Warn("Não foi possível escutar uma segunda abertura", ex); }
     }
 }

@@ -72,6 +72,10 @@ public sealed class AppSettings
     public string MilestoneNote { get; set; } = "";
     public string DiagScenario { get; set; } = "geral";
 
+    // Bandeja: fechar a janela mantém o programa rodando (widgets, histórico e alertas)
+    public bool CloseToTray { get; set; }
+    public bool TrayHintShown { get; set; }
+
     // Widgets flutuantes (nenhum até o usuário adicionar)
     public List<WidgetConfig> Widgets { get; set; } = new();
 

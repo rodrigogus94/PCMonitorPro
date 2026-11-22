@@ -205,4 +205,47 @@ public class UiSmokeTests : IDisposable
 
     private static void CallH(object o, string name) =>
         o.GetType().GetMethod(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)!.Invoke(o, new object?[] { null, new RoutedEventArgs() });
+
+    [Fact]
+    public void Tray_HidesOnCloseOnlyWhenEnabled_AndExitReallyCloses()
+    {
+        Assert.True(MainWindow.ShouldHideOnClose(true, false));
+        Assert.False(MainWindow.ShouldHideOnClose(false, false));
+        Assert.False(MainWindow.ShouldHideOnClose(true, true));   // Sair / desligar o Windows
+
+        RunSta(() =>
+        {
+            EnsureApp();
+            var w = new MainWindow();
+            try
+            {
+                Call(w, "InitTray");
+                var settings = Field<AppSettings>(w, "_settings");
+                var tray = Field<System.Windows.Forms.NotifyIcon>(w, "_tray");
+                Assert.True(tray.Visible);
+
+                w.Show();
+                var onClosing = w.GetType().GetMethod("OnClosingToTray", BindingFlags.NonPublic | BindingFlags.Instance)!;
+
+                settings.CloseToTray = false;
+                var e1 = new System.ComponentModel.CancelEventArgs();
+                onClosing.Invoke(w, new object?[] { w, e1 });
+                Assert.False(e1.Cancel);                 // opção desligada: fechar é fechar
+
+                settings.CloseToTray = true; settings.TrayHintShown = true;
+                var e2 = new System.ComponentModel.CancelEventArgs();
+                onClosing.Invoke(w, new object?[] { w, e2 });
+                Assert.True(e2.Cancel);                  // ligada: cancela e esconde
+                Assert.False(w.IsVisible);
+
+                w.ShowFromTray();
+                Assert.True(w.IsVisible);
+            }
+            finally
+            {
+                w.GetType().GetField("_exiting", BindingFlags.NonPublic | BindingFlags.Instance)!.SetValue(w, true);
+                w.Close();
+            }
+        });
+    }
 }

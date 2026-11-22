@@ -20,6 +20,7 @@ public class AutoStartTests : IDisposable
         Assert.Equal("HighestAvailable", x.Descendants(Ns + "RunLevel").Single().Value);
         Assert.Equal("InteractiveToken", x.Descendants(Ns + "LogonType").Single().Value);
         Assert.Equal("PT0S", x.Descendants(Ns + "ExecutionTimeLimit").Single().Value);
+        Assert.Equal("--bandeja", x.Descendants(Ns + "Arguments").Single().Value);   // início automático abre na bandeja
         Assert.Equal("false", x.Descendants(Ns + "DisallowStartIfOnBatteries").Single().Value);
         Assert.Equal("false", x.Descendants(Ns + "StopIfGoingOnBatteries").Single().Value);
         Assert.Equal(@"PC\usuario", x.Descendants(Ns + "LogonTrigger").Elements(Ns + "UserId").Single().Value);

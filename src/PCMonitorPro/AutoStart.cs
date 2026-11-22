@@ -19,6 +19,8 @@ public sealed record AutoStartState(bool Exists, string? Command, bool IsThisExe
 public static class AutoStart
 {
     public const string TaskName = "PCMonitorPro";
+    /// <summary>Argumento do início automático: abre direto na bandeja (se a opção de bandeja estiver ligada).</summary>
+    public const string TrayArgument = "--bandeja";
     private static readonly XNamespace Ns = "http://schemas.microsoft.com/windows/2004/02/mit/task";
 
     public static string? ExePath => Environment.ProcessPath;
@@ -74,6 +76,7 @@ public static class AutoStart
                 new XElement(Ns + "Actions", new XAttribute("Context", "Author"),
                     new XElement(Ns + "Exec",
                         new XElement(Ns + "Command", exePath),
+                        new XElement(Ns + "Arguments", TrayArgument),
                         new XElement(Ns + "WorkingDirectory", Path.GetDirectoryName(exePath))))));
         return doc.Declaration + Environment.NewLine + doc.Root;
     }

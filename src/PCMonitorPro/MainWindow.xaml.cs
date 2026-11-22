@@ -104,7 +104,7 @@ public partial class MainWindow : Window
         UpdateDashboard();
 
         // A janela aparece já; as coletas pesadas (WMI, sensores, GPU) rodam em paralelo fora da thread da janela.
-        Loaded += async (_, _) => { ApplyStoredSettings(); StartWidgets(); await LoadHardwareAsync(); };
+        Loaded += async (_, _) => { ApplyStoredSettings(); InitTray(); StartWidgets(); if (StartInTray) Hide(); await LoadHardwareAsync(); };
 
         _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         _timer.Tick += (_, _) =>
@@ -145,6 +145,7 @@ public partial class MainWindow : Window
             ShutdownInteg();
             _launchCts?.Cancel();
             _diagCts?.Cancel(); _cmdCts?.Cancel(); DiagnosticsCollector.Cancel(); CommandRunner.Cancel();
+            DisposeTray();
             FlushWidgets();   // grava posições pendentes e fecha as janelas (senão o app não encerra)
             _recorder?.Dispose();   // grava a marca de fim normal
             _monitor.Dispose();
