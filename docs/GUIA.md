@@ -58,6 +58,8 @@ Limitação: sobre jogos em **tela cheia exclusiva** os widgets podem não apare
 - **Iniciar com o Windows:** cria uma tarefa do Agendador que abre o programa, já como administrador, ao entrar no Windows.
   Por segurança, **só ativa** se o `.exe` e a pasta dele não puderem ser alterados por programas comuns (por exemplo, instalado
   em `C:\Program Files`). Sem essa regra, qualquer programa poderia trocar o arquivo e virar administrador.
+  **Como liberar:** use o instalador (`PCMonitorPro-Setup-<versão>.exe`): ele instala em `C:\Program Files\PC Monitor Pro` e já
+  oferece essa opção na instalação. Se você instalou por ali, a opção desta página funciona normalmente.
 - **Bandeja do sistema:** o ícone fica ao lado do relógio (duplo clique abre, botão direito tem *Abrir* e *Sair*). Com a opção
   *Ao fechar a janela, continuar na bandeja* ligada, fechar a janela só a esconde: widgets, histórico e alertas continuam. Com
   *Iniciar com o Windows* ligado, o programa abre direto na bandeja. Abrir o programa de novo traz a janela de volta.

@@ -25,5 +25,15 @@ jobs:
       - name: Compilar
         run: dotnet build PCMonitorPro.sln -c Release --no-restore -nologo
 
+      - name: Instalador (só compila o script, com um arquivo de mentira)
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup --no-progress -y }
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item "$env:SystemRoot\System32\notepad.exe" dist\PCMonitorPro.exe
+          & $iscc "/DAppVersion=0.0.0" "/DSourceExe=$PWD\dist\PCMonitorPro.exe" installer\PCMonitorPro.iss
+          if ($LASTEXITCODE -ne 0) { throw "ISCC falhou ($LASTEXITCODE)" }
+
       - name: Testes
         run: dotnet test PCMonitorPro.sln -c Release --no-build -nologo --logger GitHubActions

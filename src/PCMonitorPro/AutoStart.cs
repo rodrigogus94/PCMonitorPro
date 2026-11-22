@@ -21,6 +21,9 @@ public static class AutoStart
     public const string TaskName = "PCMonitorPro";
     /// <summary>Argumento do início automático: abre direto na bandeja (se a opção de bandeja estiver ligada).</summary>
     public const string TrayArgument = "--bandeja";
+    /// <summary>Usados pelo instalador (veja CliCommands).</summary>
+    public const string EnableArgument = "--ativar-inicio";
+    public const string DisableArgument = "--desativar-inicio";
     private static readonly XNamespace Ns = "http://schemas.microsoft.com/windows/2004/02/mit/task";
 
     public static string? ExePath => Environment.ProcessPath;

@@ -31,20 +31,36 @@ jobs:
       - name: Publicar (arquivo único comprimido, com o .NET embutido)
         run: dotnet publish src/PCMonitorPro/PCMonitorPro.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=None -o dist -nologo
 
+      - name: Instalador (Inno Setup)
+        shell: pwsh
+        run: |
+          $v = ([xml](Get-Content src/PCMonitorPro/PCMonitorPro.csproj)).Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1
+          if (-not $v) { throw 'Version não encontrada no csproj' }
+          # a tag precisa começar com a versão do projeto (v0.17.0, v0.17.0-rc1...): evita instalador 0.17.0 dentro da release v0.18.0
+          if (-not $env:GITHUB_REF_NAME.StartsWith("v$v")) { throw "A tag $env:GITHUB_REF_NAME não combina com a versão $v do projeto" }
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup --no-progress -y }
+          & $iscc "/DAppVersion=$v" "/DSourceExe=$PWD\dist\PCMonitorPro.exe" installer\PCMonitorPro.iss
+          if ($LASTEXITCODE -ne 0) { throw "ISCC falhou ($LASTEXITCODE)" }
+          Get-ChildItem dist -Filter 'PCMonitorPro-Setup-*.exe' | Format-List Name, Length
+
       - name: Montar pacote e somas de verificação
         shell: pwsh
         run: |
           Copy-Item README.md dist/README.md
           Copy-Item LICENSE dist/LICENSE
           Copy-Item NOTICE.md dist/NOTICE.md
-          Compress-Archive -Path dist/PCMonitorPro.exe, dist/README.md, dist/LICENSE, dist/NOTICE.md -DestinationPath PCMonitorPro.zip
-          $files = 'dist/PCMonitorPro.exe', 'PCMonitorPro.zip'
+          $setup = (Get-ChildItem dist -Filter 'PCMonitorPro-Setup-*.exe' | Select-Object -First 1).FullName
+          # o zip tem o instalador (o caminho recomendado); o .exe solto, sem instalar, vai como arquivo separado
+          Compress-Archive -Path $setup, dist/README.md, dist/LICENSE, dist/NOTICE.md -DestinationPath PCMonitorPro.zip
+          $files = $setup, 'dist/PCMonitorPro.exe', 'PCMonitorPro.zip'
           $files | ForEach-Object { $h = (Get-FileHash $_ -Algorithm SHA256).Hash.ToLower(); "$h  $(Split-Path $_ -Leaf)" } | Set-Content -Encoding ascii SHA256SUMS.txt
           Get-Content SHA256SUMS.txt
 
       - uses: actions/attest-build-provenance@ef244123eb79f2f7a7e75d99086184180e6d0018 # v1.4.4
         with:
           subject-path: |
+            dist/PCMonitorPro-Setup-*.exe
             dist/PCMonitorPro.exe
             PCMonitorPro.zip
 
@@ -53,4 +69,5 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create $env:GITHUB_REF_NAME dist/PCMonitorPro.exe PCMonitorPro.zip SHA256SUMS.txt --title "PC Monitor Pro $env:GITHUB_REF_NAME" --generate-notes
+          $setup = (Get-ChildItem dist -Filter 'PCMonitorPro-Setup-*.exe' | Select-Object -First 1).FullName
+          gh release create $env:GITHUB_REF_NAME $setup dist/PCMonitorPro.exe PCMonitorPro.zip SHA256SUMS.txt --title "PC Monitor Pro $env:GITHUB_REF_NAME" --generate-notes

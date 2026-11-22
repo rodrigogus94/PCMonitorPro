@@ -25,6 +25,9 @@ public partial class App : Application
         if (IsUnderTest) { base.OnStartup(e); return; }
         AppLog.InstallGlobalHandlers(this);
         AppLog.Info($"PC Monitor Pro iniciado (v{typeof(App).Assembly.GetName().Version}, {Environment.OSVersion.Version})");
+        // Comandos do instalador (sem janela): rodam e encerram, sem mexer na instância única.
+        var cli = CliCommands.Parse(e.Args);
+        if (cli != CliCommand.None) { Shutdown(CliCommands.Run(cli)); return; }
         bool first;
         try { _single = new Mutex(true, @"Local\PCMonitorPro.SingleInstance", out first); }
         catch (UnauthorizedAccessException) { first = false; } // criado por outra instância com outro nível de permissão

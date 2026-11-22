@@ -44,6 +44,18 @@ com correções de segurança e de bugs. Veja [NOTICE.md](NOTICE.md) para a orig
 Riscos que continuam: o programa é **unsigned** e pede administrador (necessário para os sensores), então o Windows/antivírus pode
 avisar. Baixe apenas das releases do repositório e confira o `SHA256SUMS.txt`.
 
+## Instalação (Windows 10/11, 64 bits)
+1. Baixe o `.zip` da última [Release](https://github.com/rodrigogus94/PCMonitorPro/releases) e extraia.
+2. Execute `PCMonitorPro-Setup-<versão>.exe` e siga o assistente (pede administrador). Ele instala em
+   `C:\Program Files\PC Monitor Pro`, cria o atalho no Menu Iniciar e, se você marcar, na Área de Trabalho.
+3. Marque **Iniciar o PC Monitor Pro com o Windows** se quiser que ele abra sozinho. Isso só é possível porque o programa fica em
+   uma pasta protegida (veja o [guia](docs/GUIA.md)). Dá para ligar ou desligar depois em Configurações.
+4. Desinstalar: *Configurações do Windows → Aplicativos* (ou o atalho "Desinstalar" no Menu Iniciar). O desinstalador pergunta se
+   deve apagar também as configurações e o histórico.
+
+Também há o `PCMonitorPro.exe` solto na Release, para usar sem instalar (nesse caso "Iniciar com o Windows" não fica disponível).
+O instalador **não é assinado digitalmente**: o Windows pode mostrar "editor desconhecido". Confira o `SHA256SUMS.txt` da Release.
+
 ## Compilar e testar
 Requer o .NET 8 SDK (`winget install Microsoft.DotNet.SDK.8`).
 ```
