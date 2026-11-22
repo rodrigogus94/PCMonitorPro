@@ -3,8 +3,14 @@ using Xunit;
 
 namespace PCMonitorPro.Tests;
 
-public class AutoStartTests
+[Collection("pasta-de-dados")]
+public class AutoStartTests : IDisposable
 {
+    // os testes que provocam erro de leitura não devem escrever no log real do usuário
+    private readonly string _tmp = Path.Combine(Path.GetTempPath(), "pmp-as-log-" + Guid.NewGuid().ToString("N"));
+    public AutoStartTests() { Directory.CreateDirectory(_tmp); AppLog.UsePath(Path.Combine(_tmp, "t.log")); }
+    public void Dispose() { AppLog.UsePath(null); try { Directory.Delete(_tmp, true); } catch { } }
+
     private static readonly XNamespace Ns = "http://schemas.microsoft.com/windows/2004/02/mit/task";
 
     [Fact]

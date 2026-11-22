@@ -28,8 +28,8 @@ jobs:
       - name: Testes (a release só sai se passarem)
         run: dotnet test PCMonitorPro.sln -c Release -nologo
 
-      - name: Publicar (arquivo único, com o .NET embutido)
-        run: dotnet publish src/PCMonitorPro/PCMonitorPro.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -o dist -nologo
+      - name: Publicar (arquivo único comprimido, com o .NET embutido)
+        run: dotnet publish src/PCMonitorPro/PCMonitorPro.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=None -o dist -nologo
 
       - name: Montar pacote e somas de verificação
         shell: pwsh
