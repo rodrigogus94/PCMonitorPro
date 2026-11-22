@@ -49,6 +49,21 @@ public class WidgetTests
         => Assert.Equal(expected, WidgetFormat.LevelFor(Cat[id], v));
 
     [Fact]
+    public void ApplyLimits_changes_level_and_rejects_inverted_pair()
+    {
+        try
+        {
+            WidgetFormat.ApplyLimits(new AppSettings { WidgetTempWarn = 60, WidgetTempBad = 70, WidgetPctWarn = 50, WidgetPctBad = 90 });
+            Assert.Equal(WidgetLevel.Warn, WidgetFormat.LevelFor(Cat["cpu.temp"], 65));
+            Assert.Equal(WidgetLevel.Bad, WidgetFormat.LevelFor(Cat["cpu.temp"], 70));
+            // amarelo >= vermelho é inválido: volta ao padrão do original
+            WidgetFormat.ApplyLimits(new AppSettings { WidgetTempWarn = 90, WidgetTempBad = 80, WidgetPctWarn = 50, WidgetPctBad = 90 });
+            Assert.Equal((75.0, 88.0, 50.0, 90.0), (WidgetFormat.TempWarn, WidgetFormat.TempBad, WidgetFormat.PctWarn, WidgetFormat.PctBad));
+        }
+        finally { WidgetFormat.ApplyLimits(new AppSettings()); }
+    }
+
+    [Fact]
     public void Level_is_neutral_without_value_or_metric()
     {
         Assert.Equal(WidgetLevel.Neutral, WidgetFormat.LevelFor(Cat["cpu.temp"], null));

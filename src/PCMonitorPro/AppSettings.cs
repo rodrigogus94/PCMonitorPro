@@ -75,6 +75,19 @@ public sealed class AppSettings
     // Widgets flutuantes (nenhum até o usuário adicionar)
     public List<WidgetConfig> Widgets { get; set; } = new();
 
+    // Histórico de sensores (detecção de queda)
+    public bool HistoryEnabled { get; set; } = true;
+    public int HistoryKeepDays { get; set; } = 14;
+
+    // Pasta dos relatórios do diagnóstico (vazio = Documentos\PCMonitor)
+    public string? ReportFolder { get; set; }
+
+    // Limites de cor dos widgets: amarelo no primeiro, vermelho no segundo
+    public int WidgetTempWarn { get; set; } = 75;
+    public int WidgetTempBad { get; set; } = 88;
+    public int WidgetPctWarn { get; set; } = 80;
+    public int WidgetPctBad { get; set; } = 95;
+
     // Alertas de temperatura/RAM (aviso no canto da tela, com cooldown por sensor)
     public bool AlertsEnabled { get; set; } = true;
     public int AlertTempC { get; set; } = 90;

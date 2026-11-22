@@ -21,7 +21,8 @@ public partial class MainWindow
     {
         try
         {
-            _recorder = new SessionRecorder();
+            if (!_settings.HistoryEnabled) return;
+            _recorder = new SessionRecorder(keepDays: _settings.HistoryKeepDays);
             await Task.Run(_recorder.Start);
             if (_recorder.PreviousUnclean is not { } prev) return;
             string detail = await Task.Run(() =>
@@ -66,8 +67,6 @@ public partial class MainWindow
         }
         ShowCrashBanner();
         ShowMilestone();
-        LoadAlertUi();
-        _ = LoadAutoStartUi();
     }
 
     // ================= Iniciar com o Windows =================

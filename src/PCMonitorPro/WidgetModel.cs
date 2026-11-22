@@ -123,8 +123,18 @@ public static class WidgetCatalog
 
 public static class WidgetFormat
 {
-    /// <summary>Limites de cor (amarelo, vermelho), iguais aos do PC Monitor original.</summary>
-    public const double TempWarn = 75, TempBad = 88, PctWarn = 80, PctBad = 95;
+    /// <summary>Limites de cor (amarelo, vermelho); o padrão é o do PC Monitor original.</summary>
+    public static double TempWarn { get; private set; } = 75;
+    public static double TempBad { get; private set; } = 88;
+    public static double PctWarn { get; private set; } = 80;
+    public static double PctBad { get; private set; } = 95;
+
+    /// <summary>Aplica os limites das configurações. Se o amarelo não for menor que o vermelho, volta ao padrão do original.</summary>
+    public static void ApplyLimits(AppSettings s)
+    {
+        (TempWarn, TempBad) = s.WidgetTempWarn < s.WidgetTempBad ? (s.WidgetTempWarn, s.WidgetTempBad) : (75, 88);
+        (PctWarn, PctBad) = s.WidgetPctWarn < s.WidgetPctBad ? (s.WidgetPctWarn, s.WidgetPctBad) : (80, 95);
+    }
 
     public static string FormatValue(WidgetMetric? m, double? v)
     {

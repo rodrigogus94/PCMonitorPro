@@ -82,10 +82,16 @@ public class UiSmokeTests : IDisposable
                 Assert.Equal(Diagnostics.Scenarios.Count, chips.Children.Count);
                 Assert.Contains("Nenhum marco", Field<TextBlock>(w, "DiagMilestoneText").Text);
 
+                Call(w, "InitSettings");
                 Assert.True(Field<CheckBox>(w, "AlertEnabled").IsChecked);
                 Assert.Equal("90", Field<TextBox>(w, "AlertTemp").Text);
                 Assert.Equal("95", Field<TextBox>(w, "AlertRam").Text);
                 Assert.NotNull(Field<CheckBox>(w, "AutoStartCheck"));
+                Assert.True(Field<CheckBox>(w, "HistEnabled").IsChecked);
+                Assert.Equal("14", Field<TextBox>(w, "HistDays").Text);
+                Assert.Equal("75", Field<TextBox>(w, "LimTempWarn").Text);
+                Assert.Contains("Pasta padrão", Field<TextBlock>(w, "ReportFolderText").Text);
+                Assert.Contains("PC Monitor Pro v0.17.0", Field<TextBlock>(w, "AboutText").Text);
 
                 Call(w, "RefreshCommands");
                 var list = Field<ListBox>(w, "CmdList");

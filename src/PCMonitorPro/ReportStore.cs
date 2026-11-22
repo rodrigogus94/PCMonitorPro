@@ -6,7 +6,10 @@ namespace PCMonitorPro;
 /// <summary>Relatórios de diagnóstico salvos em Documentos\PCMonitor.</summary>
 public static class ReportStore
 {
-    public static string Folder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PCMonitor");
+    public static string DefaultFolder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PCMonitor");
+    /// <summary>Pasta escolhida nas configurações (null = padrão).</summary>
+    public static string? Custom { get; set; }
+    public static string Folder => string.IsNullOrWhiteSpace(Custom) ? DefaultFolder : Custom;
 
     /// <summary>Grava o relatório em um arquivo novo (nunca sobrescreve) e devolve o caminho.</summary>
     public static string Save(string text, DateTime? now = null, string? folder = null)

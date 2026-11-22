@@ -239,6 +239,12 @@
                                     <TextBlock Text="Widgets" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </RadioButton>
+                            <RadioButton x:Name="NavSettings" Style="{StaticResource NavItem}" Tag="PageSettings" Checked="Nav_Checked">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE713;" FontFamily="{StaticResource Icons}" FontSize="14" Width="28" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Configurações" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </RadioButton>
                             </StackPanel>
                             <ToggleButton x:Name="GrpGames" Style="{StaticResource NavGroup}" Content="JOGOS"/>
                             <StackPanel x:Name="GrpGamesItems" Margin="10,0,0,4" Visibility="{Binding IsChecked, ElementName=GrpGames, Converter={StaticResource BoolVis}}">
@@ -832,32 +838,6 @@
                                 </Grid>
                             </StackPanel>
                         </Border>
-                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
-                            <StackPanel>
-                                <TextBlock Text="ALERTAS DE TEMPERATURA E RAM" Style="{StaticResource Label}"/>
-                                <TextBlock Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,6,0,10"
-                                           Text="Mostra um aviso no canto da tela (sem tirar o foco do jogo) quando passar do limite. O mesmo sensor só avisa de novo depois de 5 minutos."/>
-                                <WrapPanel VerticalAlignment="Center">
-                                    <CheckBox x:Name="AlertEnabled" Content="Avisar" VerticalAlignment="Center" Margin="0,0,20,0"
-                                              Checked="AlertSettings_Changed" Unchecked="AlertSettings_Changed"/>
-                                    <TextBlock Text="Temperatura a partir de" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                    <TextBox x:Name="AlertTemp" Width="56" MaxLength="3" ToolTip="Entre 50 e 120 °C" LostFocus="AlertSettings_Changed"/>
-                                    <TextBlock Text="°C" VerticalAlignment="Center" Margin="6,0,20,0"/>
-                                    <TextBlock Text="RAM a partir de" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                    <TextBox x:Name="AlertRam" Width="56" MaxLength="3" ToolTip="Entre 50 e 100 %" LostFocus="AlertSettings_Changed"/>
-                                    <TextBlock Text="%" VerticalAlignment="Center" Margin="6,0,0,0"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </Border>
-                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
-                            <StackPanel>
-                                <TextBlock Text="INICIAR COM O WINDOWS" Style="{StaticResource Label}"/>
-                                <TextBlock Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,6,0,10"
-                                           Text="Abre o programa sozinho, como administrador (necessário para as temperaturas), quando você entra no Windows. Só é ativado se a pasta do programa estiver protegida contra alterações por programas comuns."/>
-                                <CheckBox x:Name="AutoStartCheck" Content="Iniciar com o Windows" Checked="AutoStart_Changed" Unchecked="AutoStart_Changed"/>
-                                <TextBlock x:Name="AutoStartStatus" Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,8,0,0"/>
-                            </StackPanel>
-                        </Border>
                         <TextBox x:Name="DiagReport" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" Height="460"
                                  VerticalScrollBarVisibility="Auto" FontFamily="{StaticResource Mono}" FontSize="12"/>
                         <WrapPanel Margin="0,12,0,0">
@@ -925,6 +905,96 @@
                         </Grid>
                     </Grid>
                 </Grid>
+
+                <!-- ===== CONFIGURAÇÕES ===== -->
+                <ScrollViewer x:Name="PageSettings" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="36,30,36,30" MaxWidth="860" HorizontalAlignment="Left">
+                        <TextBlock Text="Configurações" Style="{StaticResource H1}"/>
+                        <TextBlock Style="{StaticResource Sub}" TextWrapping="Wrap" Margin="0,0,0,20"
+                                   Text="Tudo é salvo na hora. O tema (claro/escuro) fica no botão da barra de título."/>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
+                            <StackPanel>
+                                <TextBlock Text="ALERTAS DE TEMPERATURA E RAM" Style="{StaticResource Label}"/>
+                                <TextBlock Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,6,0,10"
+                                           Text="Mostra um aviso no canto da tela (sem tirar o foco do jogo) quando passar do limite. O mesmo sensor só avisa de novo depois de 5 minutos."/>
+                                <WrapPanel VerticalAlignment="Center">
+                                    <CheckBox x:Name="AlertEnabled" Content="Avisar" VerticalAlignment="Center" Margin="0,0,20,0"
+                                              Checked="AlertSettings_Changed" Unchecked="AlertSettings_Changed"/>
+                                    <TextBlock Text="Temperatura a partir de" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <TextBox x:Name="AlertTemp" Width="56" MaxLength="3" ToolTip="Entre 50 e 120 °C" LostFocus="AlertSettings_Changed"/>
+                                    <TextBlock Text="°C" VerticalAlignment="Center" Margin="6,0,20,0"/>
+                                    <TextBlock Text="RAM a partir de" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <TextBox x:Name="AlertRam" Width="56" MaxLength="3" ToolTip="Entre 50 e 100 %" LostFocus="AlertSettings_Changed"/>
+                                    <TextBlock Text="%" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
+                            <StackPanel>
+                                <TextBlock Text="INICIAR COM O WINDOWS" Style="{StaticResource Label}"/>
+                                <TextBlock Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,6,0,10"
+                                           Text="Abre o programa sozinho, como administrador (necessário para as temperaturas), quando você entra no Windows. Só é ativado se a pasta do programa estiver protegida contra alterações por programas comuns."/>
+                                <CheckBox x:Name="AutoStartCheck" Content="Iniciar com o Windows" Checked="AutoStart_Changed" Unchecked="AutoStart_Changed"/>
+                                <TextBlock x:Name="AutoStartStatus" Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
+                            <StackPanel>
+                                <TextBlock Text="HISTÓRICO DE SENSORES" Style="{StaticResource Label}"/>
+                                <TextBlock Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,6,0,10"
+                                           Text="Grava temperatura, uso e RAM a cada 5 segundos. Se o PC cair (tela azul, reinício seco), a próxima abertura mostra os últimos valores. Vale na próxima vez que abrir o programa."/>
+                                <WrapPanel VerticalAlignment="Center">
+                                    <CheckBox x:Name="HistEnabled" Content="Gravar histórico" VerticalAlignment="Center" Margin="0,0,20,0"
+                                              Checked="SetHistory_Changed" Unchecked="SetHistory_Changed"/>
+                                    <TextBlock Text="Guardar por" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <TextBox x:Name="HistDays" Width="56" MaxLength="3" ToolTip="Entre 1 e 365 dias" LostFocus="SetHistory_Changed"/>
+                                    <TextBlock Text="dias" VerticalAlignment="Center" Margin="6,0,20,0"/>
+                                    <Button Style="{StaticResource OutlineButton}" Content="ABRIR PASTA" Padding="14,7" Click="BtnDiagHistory_Click"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
+                            <StackPanel>
+                                <TextBlock Text="CORES DOS WIDGETS" Style="{StaticResource Label}"/>
+                                <TextBlock Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,6,0,10"
+                                           Text="O valor fica amarelo no primeiro limite e vermelho no segundo (só temperatura e porcentagem)."/>
+                                <WrapPanel VerticalAlignment="Center">
+                                    <TextBlock Text="Temperatura: amarelo" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <TextBox x:Name="LimTempWarn" Width="52" MaxLength="3" LostFocus="SetLimits_Changed"/>
+                                    <TextBlock Text="vermelho" VerticalAlignment="Center" Margin="12,0,8,0"/>
+                                    <TextBox x:Name="LimTempBad" Width="52" MaxLength="3" LostFocus="SetLimits_Changed"/>
+                                    <TextBlock Text="°C" VerticalAlignment="Center" Margin="6,0,24,0"/>
+                                    <TextBlock Text="Uso: amarelo" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <TextBox x:Name="LimPctWarn" Width="52" MaxLength="3" LostFocus="SetLimits_Changed"/>
+                                    <TextBlock Text="vermelho" VerticalAlignment="Center" Margin="12,0,8,0"/>
+                                    <TextBox x:Name="LimPctBad" Width="52" MaxLength="3" LostFocus="SetLimits_Changed"/>
+                                    <TextBlock Text="%" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
+                            <StackPanel>
+                                <TextBlock Text="RELATÓRIOS DO DIAGNÓSTICO" Style="{StaticResource Label}"/>
+                                <TextBlock x:Name="ReportFolderText" Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,6,0,10"/>
+                                <WrapPanel>
+                                    <Button Style="{StaticResource OutlineButton}" Content="ESCOLHER PASTA…" Padding="14,7" Margin="0,0,8,0" Click="BtnReportFolder_Click"/>
+                                    <Button Style="{StaticResource OutlineButton}" Content="USAR A PADRÃO" Padding="14,7" Margin="0,0,8,0" Click="BtnReportDefault_Click"/>
+                                    <Button Style="{StaticResource OutlineButton}" Content="ABRIR" Padding="14,7" Click="BtnReportOpen_Click"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
+                            <StackPanel>
+                                <TextBlock Text="SOBRE" Style="{StaticResource Label}"/>
+                                <TextBlock x:Name="AboutText" TextWrapping="Wrap" Margin="0,6,0,10"/>
+                                <WrapPanel>
+                                    <Button Style="{StaticResource OutlineButton}" Content="ABRIR PASTA DE DADOS" Padding="14,7" Margin="0,0,8,0" Click="BtnDataFolder_Click"/>
+                                    <Button Style="{StaticResource OutlineButton}" Content="ABRIR LOG" Padding="14,7" Click="BtnOpenLog_Click"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                        </StackPanel>
+                </ScrollViewer>
 
                 <!-- ===== WIDGETS FLUTUANTES ===== -->
                 <Grid x:Name="PageWidgets" Margin="36,30,36,30" Visibility="Collapsed">

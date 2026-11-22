@@ -104,7 +104,7 @@ public partial class MainWindow : Window
         UpdateDashboard();
 
         // A janela aparece já; as coletas pesadas (WMI, sensores, GPU) rodam em paralelo fora da thread da janela.
-        Loaded += async (_, _) => { StartWidgets(); await LoadHardwareAsync(); };
+        Loaded += async (_, _) => { ApplyStoredSettings(); StartWidgets(); await LoadHardwareAsync(); };
 
         _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         _timer.Tick += (_, _) =>
@@ -286,6 +286,7 @@ public partial class MainWindow : Window
             case "PageDiag": InitDiag(); break;
             case "PageCmds": RefreshCommands(); break;
             case "PageWidgets": InitWidgets(); break;
+            case "PageSettings": InitSettings(); break;
             case "PageOc": UpdateOcGpuState(); UpdateRecentErrors(); break;
             case "PageInteg": InitInteg(); break;
             case "PageLauncher": InitLauncher(); break;
@@ -300,7 +301,7 @@ public partial class MainWindow : Window
 
     private void ShowPage(string name)
     {
-        foreach (var p in new FrameworkElement[] { PageDash, PageSystem, PageSensors, PageGpu, PageGames, PageBottleneck, PageOverlay, PageBench, PageOptimize, PageOc, PageInteg, PageLauncher, PageDriver, PageStartup, PageApps, PageMakerPorts, PageMakerDrv, PageDisks, PageEnergy, PageNet, PageDiag, PageCmds, PageWidgets, PageStress })
+        foreach (var p in new FrameworkElement[] { PageDash, PageSystem, PageSensors, PageGpu, PageGames, PageBottleneck, PageOverlay, PageBench, PageOptimize, PageOc, PageInteg, PageLauncher, PageDriver, PageStartup, PageApps, PageMakerPorts, PageMakerDrv, PageDisks, PageEnergy, PageNet, PageDiag, PageCmds, PageWidgets, PageSettings, PageStress })
             p.Visibility = p.Name == name ? Visibility.Visible : Visibility.Collapsed;
     }
 

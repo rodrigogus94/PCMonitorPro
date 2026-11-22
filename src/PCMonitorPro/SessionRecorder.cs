@@ -67,22 +67,24 @@ public static class HistorySampler
 public sealed class SessionRecorder : IDisposable
 {
     public const int Interval = 5;
-    public const int KeepDays = 14;
+    public const int DefaultKeepDays = 14;
     private readonly HistoryLogger _logger;
     private int _ticks;
     private string? _topProc;
     private Task? _topTask;
 
     public string Folder { get; }
+    public int KeepDays { get; }
     public string? CurrentPath => _logger.Path;
     /// <summary>Sessão anterior sem a marca de fim normal, achada ao iniciar (null = nenhuma).</summary>
     public SessionInfo? PreviousUnclean { get; private set; }
 
     public static string DefaultFolder => Path.Combine(AppSettings.Folder, "historico");
 
-    public SessionRecorder(string? folder = null)
+    public SessionRecorder(string? folder = null, int keepDays = DefaultKeepDays)
     {
         Folder = folder ?? DefaultFolder;
+        KeepDays = Math.Clamp(keepDays, 1, 365);
         _logger = new HistoryLogger(Folder);
     }
 
