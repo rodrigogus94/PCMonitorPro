@@ -67,6 +67,46 @@ public partial class MainWindow
         ShowCrashBanner();
         ShowMilestone();
         LoadAlertUi();
+        _ = LoadAutoStartUi();
+    }
+
+    // ================= Iniciar com o Windows =================
+
+    private bool _autoLoading;
+
+    private async Task LoadAutoStartUi()
+    {
+        try
+        {
+            var st = await Task.Run(AutoStart.GetState);
+            _autoLoading = true;
+            AutoStartCheck.IsChecked = st.Exists;
+            _autoLoading = false;
+            AutoStartStatus.Text = !st.Exists ? "" : st.IsThisExe ? "Ativado."
+                : $"Ativado, mas aponta para outro arquivo ({st.Command}). Desmarque e marque de novo para apontar para este.";
+        }
+        catch (Exception ex) { _autoLoading = false; AppLog.Debug(ex); }
+    }
+
+    private async void AutoStart_Changed(object sender, RoutedEventArgs e)
+    {
+        if (_autoLoading) return;
+        bool want = AutoStartCheck.IsChecked == true;
+        AutoStartCheck.IsEnabled = false;
+        AutoStartStatus.Text = "Aplicando…";
+        try
+        {
+            var (ok, msg) = await Task.Run(() => want ? AutoStart.Enable() : AutoStart.Disable());
+            AutoStartStatus.Text = msg;
+            if (!ok)   // volta a caixa ao estado real, sem disparar de novo
+            {
+                _autoLoading = true;
+                AutoStartCheck.IsChecked = !want;
+                _autoLoading = false;
+            }
+        }
+        catch (Exception ex) { AppLog.Warn("Autostart", ex); AutoStartStatus.Text = "Falha: " + ex.Message; }
+        finally { AutoStartCheck.IsEnabled = true; }
     }
 
     // ================= Alertas de temperatura e RAM =================

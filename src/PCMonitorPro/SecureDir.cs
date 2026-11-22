@@ -55,7 +55,9 @@ public static class SecureDir
     }
 
     /// <summary>Devolve o motivo se a pasta puder ser alterada por quem não é administrador; null se estiver protegida.</summary>
-    internal static string? Inspect(DirectorySecurity sec)
+    /// <param name="ancestor">true para uma pasta que apenas contém o alvo (ex.: C:\ acima de Program Files): só importa quem
+    /// pode apagar/renomear o que está dentro ou mudar permissões; criar pastas novas ali não deixa trocar o alvo.</param>
+    internal static string? Inspect(FileSystemSecurity sec, bool ancestor = false)
     {
         var owner = sec.GetOwner(typeof(SecurityIdentifier)) as SecurityIdentifier;
         if (owner == null || !(owner.Equals(Admins) || owner.Equals(System_) || owner.Equals(TrustedInstaller)))
@@ -65,12 +67,16 @@ public static class SecureDir
             FileSystemRights.CreateDirectories | FileSystemRights.WriteAttributes | FileSystemRights.WriteExtendedAttributes |
             FileSystemRights.Delete | FileSystemRights.DeleteSubdirectoriesAndFiles | FileSystemRights.ChangePermissions |
             FileSystemRights.TakeOwnership;
+        const FileSystemRights replaceLike = FileSystemRights.Delete | FileSystemRights.DeleteSubdirectoriesAndFiles |
+            FileSystemRights.ChangePermissions | FileSystemRights.TakeOwnership;
+        var watched = ancestor ? replaceLike : writeLike;
         foreach (FileSystemAccessRule r in sec.GetAccessRules(true, true, typeof(SecurityIdentifier)))
         {
             if (r.AccessControlType != AccessControlType.Allow) continue;
+            if (ancestor && (r.PropagationFlags & PropagationFlags.InheritOnly) != 0) continue;   // vale só para os filhos
             var sid = (SecurityIdentifier)r.IdentityReference;
             if (sid.Equals(Admins) || sid.Equals(System_) || sid.Equals(TrustedInstaller) || sid.Equals(CreatorOwner)) continue;
-            if ((r.FileSystemRights & writeLike) != 0)
+            if ((r.FileSystemRights & watched) != 0)
                 return $"{sid.Value} tem permissão de escrita";
         }
         return null;

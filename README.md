@@ -5,7 +5,7 @@ Junta o **RESET EXPLODE** (MIT, de GustavoReset) com o **PC Monitor** (widgets, 
 com correções de segurança e de bugs. Veja [NOTICE.md](NOTICE.md) para a origem e as licenças.
 
 > **Estado atual: fase 1 concluída** — base do RESET EXPLODE renomeada + correções de segurança/bugs + testes + CI.
-> **Fase 2 (em andamento):** histórico, diagnóstico, marco e comandos já estão no programa (páginas **Diagnóstico** e **Comandos**); e os alertas de temperatura/RAM também; faltam widgets flutuantes e iniciar com o Windows.
+> **Fase 2 (em andamento):** histórico, diagnóstico, marco e comandos já estão no programa (páginas **Diagnóstico** e **Comandos**); e os alertas de temperatura/RAM também; e o iniciar com o Windows também; falta só os widgets flutuantes.
 
 ## O que já existe (vindo do RESET EXPLODE)
 - **Sistema**: SO, placa-mãe/BIOS, CPU, RAM por módulo, GPU (estilo GPU-Z), discos e S.M.A.R.T., energia/bateria, rede (latência, perda, bufferbloat), relatório HTML/JSON.
@@ -22,7 +22,7 @@ com correções de segurança e de bugs. Veja [NOTICE.md](NOTICE.md) para a orig
 - [x] Diagnóstico do Windows por cenário (tela azul, lentidão, calor, disco, rede, vídeo, update), com causa mais provável, evidências e passos
 - [x] Marco de comparação (antes/depois de uma mudança) e relatório automático em `Documentos\PCMonitor`
 - [x] Comandos sugeridos de PowerShell (copiar ou executar com confirmação)
-- [ ] Iniciar com o Windows (Agendador de Tarefas elevado, com verificação da pasta)
+- [x] Iniciar com o Windows (Agendador de Tarefas elevado; só ativa se a pasta do programa estiver protegida contra alterações por programas comuns)
 - [x] Botão "Abrir log" (página Diagnóstico)
 
 ## Correções de segurança e bugs (fase 1)

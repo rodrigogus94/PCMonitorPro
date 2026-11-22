@@ -71,6 +71,7 @@ public class UiSmokeTests : IDisposable
                 Assert.True(Field<CheckBox>(w, "AlertEnabled").IsChecked);
                 Assert.Equal("90", Field<TextBox>(w, "AlertTemp").Text);
                 Assert.Equal("95", Field<TextBox>(w, "AlertRam").Text);
+                Assert.NotNull(Field<CheckBox>(w, "AutoStartCheck"));
 
                 Call(w, "RefreshCommands");
                 var list = Field<ListBox>(w, "CmdList");

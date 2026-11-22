@@ -843,6 +843,15 @@
                                 </WrapPanel>
                             </StackPanel>
                         </Border>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
+                            <StackPanel>
+                                <TextBlock Text="INICIAR COM O WINDOWS" Style="{StaticResource Label}"/>
+                                <TextBlock Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,6,0,10"
+                                           Text="Abre o programa sozinho, como administrador (necessário para as temperaturas), quando você entra no Windows. Só é ativado se a pasta do programa estiver protegida contra alterações por programas comuns."/>
+                                <CheckBox x:Name="AutoStartCheck" Content="Iniciar com o Windows" Checked="AutoStart_Changed" Unchecked="AutoStart_Changed"/>
+                                <TextBlock x:Name="AutoStartStatus" Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                            </StackPanel>
+                        </Border>
                         <TextBox x:Name="DiagReport" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" Height="460"
                                  VerticalScrollBarVisibility="Auto" FontFamily="{StaticResource Mono}" FontSize="12"/>
                         <WrapPanel Margin="0,12,0,0">
