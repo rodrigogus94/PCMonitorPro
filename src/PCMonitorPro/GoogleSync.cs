@@ -57,7 +57,9 @@ public static class Pkce
 /// </summary>
 public sealed class GoogleSyncService
 {
-    public const string Scope = "openid email https://www.googleapis.com/auth/drive.appdata";
+    public const string DriveScope = "https://www.googleapis.com/auth/drive.appdata";
+    public const string Scope = "openid email " + DriveScope;
+    public const string MissingScopeMessage = "Faltou a permissão do Google Drive. Na tela do Google, deixe marcada a caixa \"Ver e gerenciar os dados de configuração do app no Drive\" e conecte de novo.";
     /// <summary>ID de cliente OAuth embutido pelo mantenedor ao compilar (vazio = o usuário informa o dele nas configurações).</summary>
     public const string BuiltInClientId = "";
     public const string BuiltInClientSecret = "";
@@ -136,6 +138,13 @@ public sealed class GoogleSyncService
             ("code", code!), ("client_id", clientId), ("client_secret", ClientSecret ?? ""), ("code_verifier", verifier),
             ("redirect_uri", redirect), ("grant_type", "authorization_code"),
         }, ct);
+        // O Google deixa o usuário desmarcar permissões na tela de consentimento: confira o que foi realmente concedido.
+        string granted = json["scope"]?.GetValue<string>() ?? "";
+        if (!granted.Split(' ', StringSplitOptions.RemoveEmptyEntries).Contains(DriveScope))
+        {
+            await RevokeQuietly(json["refresh_token"]?.GetValue<string>() ?? json["access_token"]?.GetValue<string>());
+            throw new GoogleSyncException(MissingScopeMessage);
+        }
         string? refresh = json["refresh_token"]?.GetValue<string>();
         if (string.IsNullOrEmpty(refresh))
             throw new GoogleSyncException("O Google não devolveu a permissão de uso contínuo. Remova o acesso do app em myaccount.google.com/permissions e tente de novo.");
@@ -155,6 +164,13 @@ public sealed class GoogleSyncService
         if (string.IsNullOrEmpty(token)) return;
         try { using var r = await _http.PostAsync(_ep.Revoke, new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("token", token) }), ct); }
         catch (Exception ex) { AppLog.Debug(ex); }   // sem rede: os tokens locais já foram apagados
+    }
+
+    private async Task RevokeQuietly(string? token)
+    {
+        if (string.IsNullOrEmpty(token)) return;
+        try { using var r = await _http.PostAsync(_ep.Revoke, new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("token", token) })); }
+        catch (Exception ex) { AppLog.Debug(ex); }
     }
 
     // ---------------------------------------------------------------- perfis na nuvem
@@ -238,6 +254,12 @@ public sealed class GoogleSyncService
             if (res.StatusCode == HttpStatusCode.Unauthorized && attempt == 0) { res.Dispose(); _access = null; continue; }
             string detail = await ErrorText(res);
             res.Dispose();
+            if (res.StatusCode == HttpStatusCode.Forbidden && detail.Contains("insufficient", StringComparison.OrdinalIgnoreCase))
+            {
+                await RevokeQuietly(_s.GoogleRefreshToken);
+                _s.GoogleRefreshToken = null; _s.GoogleEmail = null; _access = null; _s.Save();   // essa conexão não serve: recomeçar
+                throw new GoogleSyncException(MissingScopeMessage, needsLogin: true);
+            }
             throw new GoogleSyncException(res.StatusCode switch
             {
                 HttpStatusCode.Unauthorized => "O Google recusou o acesso. Conecte de novo.",

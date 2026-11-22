@@ -122,6 +122,32 @@ public class GoogleSyncTests : IDisposable
     }
 
     [Fact]
+    public async Task Login_without_drive_permission_is_refused_and_revoked()
+    {
+        var s = NewSettings();
+        _g.GrantedScope = "openid https://www.googleapis.com/auth/userinfo.email";   // usuário desmarcou a caixa do Drive
+        var svc = Service(s);
+        var ex = await Assert.ThrowsAsync<GoogleSyncException>(() => svc.LoginAsync(CancellationToken.None));
+        Assert.Contains("permissão do Google Drive", ex.Message);
+        Assert.False(svc.IsConnected);
+        Assert.Null(s.GoogleRefreshTokenProtected);   // nada guardado: não fica "conectado" sem poder usar
+        Assert.True(_g.Revoked);
+    }
+
+    [Fact]
+    public async Task Existing_connection_without_drive_scope_asks_to_reconnect()
+    {
+        var s = NewSettings();
+        var svc = await Connected(s);
+        _g.InsufficientScope = true;
+        var ex = await Assert.ThrowsAsync<GoogleSyncException>(() => svc.ListAsync());
+        Assert.True(ex.NeedsLogin);
+        Assert.Contains("permissão do Google Drive", ex.Message);
+        Assert.False(svc.IsConnected);
+        Assert.Null(s.GoogleRefreshTokenProtected);
+    }
+
+    [Fact]
     public async Task Login_times_out_when_user_never_finishes()
     {
         var svc = Service(NewSettings(), _ => Task.CompletedTask);

@@ -23,7 +23,9 @@ public sealed class FakeGoogle : IDisposable
     public string ClientId = "cid-teste", ClientSecret = "segredo-teste", RefreshToken = "RT-TESTE";
     public string CurrentAccessToken = "AT-0";
     public string Email = "pessoa@exemplo.com";
-    public bool InvalidGrant, ForbidDrive;
+    public bool InvalidGrant, ForbidDrive, InsufficientScope;
+    /// <summary>Escopos que o "usuário" deixou marcados na tela do Google (null = todos os pedidos).</summary>
+    public string? GrantedScope;
     public int PageSize;
     public int TokenCalls, RefreshCalls;
     public bool Revoked;
@@ -91,7 +93,7 @@ public sealed class FakeGoogle : IDisposable
                 if (!ok) { Json(c, 400, new JsonObject { ["error"] = "invalid_grant", ["error_description"] = "código ou verificador inválido" }); return; }
                 CurrentAccessToken = "AT-" + (++_atCounter);
                 string payload = Convert.ToBase64String(Encoding.UTF8.GetBytes(new JsonObject { ["email"] = Email }.ToJsonString())).TrimEnd('=').Replace('+', '-').Replace('/', '_');
-                Json(c, 200, new JsonObject { ["access_token"] = CurrentAccessToken, ["expires_in"] = 3600, ["refresh_token"] = RefreshToken, ["id_token"] = $"x.{payload}.y" });
+                Json(c, 200, new JsonObject { ["access_token"] = CurrentAccessToken, ["expires_in"] = 3600, ["refresh_token"] = RefreshToken, ["id_token"] = $"x.{payload}.y", ["scope"] = GrantedScope ?? LastScope });
                 return;
             }
             if (f["grant_type"] == "refresh_token")
@@ -109,6 +111,7 @@ public sealed class FakeGoogle : IDisposable
 
         // ---- Drive
         if (c.Request.Headers["Authorization"] != "Bearer " + CurrentAccessToken) { Json(c, 401, new JsonObject { ["error"] = new JsonObject { ["message"] = "token inválido" } }); return; }
+        if (InsufficientScope) { Json(c, 403, new JsonObject { ["error"] = new JsonObject { ["message"] = "Request had insufficient authentication scopes." } }); return; }
         if (ForbidDrive) { Json(c, 403, new JsonObject { ["error"] = new JsonObject { ["message"] = "Google Drive API has not been used in project" } }); return; }
 
         if (path == "/drive/v3/files" && method == "GET")

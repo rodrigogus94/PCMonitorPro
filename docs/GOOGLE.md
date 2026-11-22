@@ -29,6 +29,8 @@ embutir o dele; quem só usa o `.exe` cria o seu seguindo os passos abaixo.
    Copie o **ID do cliente** e o **segredo do cliente**.
 5. No PC Monitor Pro, abra **Configurações → Sincronizar com o Google → Configuração de acesso**, cole o ID e o segredo e
    clique em **CONECTAR**. O navegador abre; entre na conta e autorize.
+   **Atenção:** a tela do Google tem uma caixa para cada permissão. Deixe marcada a de "Ver e gerenciar os dados de configuração do app
+   no Google Drive"; se ela ficar desmarcada, o programa avisa e pede para conectar de novo.
 
 Na primeira vez o Google mostra "O Google não verificou este app". É esperado com um projeto seu em modo de teste:
 **Avançado → Acessar PC Monitor Pro (não seguro)** (é o *seu* projeto).
