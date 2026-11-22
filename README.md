@@ -4,8 +4,10 @@ Monitor, diagnóstico e ferramentas de desempenho para **Windows 10/11**, em um 
 Junta o **RESET EXPLODE** (MIT, de GustavoReset) com o **PC Monitor** (widgets, histórico de quedas e diagnóstico do Windows),
 com correções de segurança e de bugs. Veja [NOTICE.md](NOTICE.md) para a origem e as licenças.
 
-> **Estado atual: fase 1 concluída** — base do RESET EXPLODE renomeada + correções de segurança/bugs + testes + CI.
-> **Fase 2 concluída:** histórico, diagnóstico, marco, comandos, alertas, iniciar com o Windows e widgets flutuantes já estão no programa. Resta a fase 3 (integração da navegação, marca própria, docs).
+> **Estado atual: fases 1 e 2 concluídas.** Base com correções de segurança, histórico de quedas, diagnóstico, comandos sugeridos,
+> widgets flutuantes, alertas e iniciar com o Windows, com marca e testes próprios. Veja o [guia de uso](docs/GUIA.md).
+
+![Widget](docs/img/widget-vertical.png) ![Widget horizontal](docs/img/widget-horizontal.png)
 
 ## O que já existe (vindo do RESET EXPLODE)
 - **Sistema**: SO, placa-mãe/BIOS, CPU, RAM por módulo, GPU (estilo GPU-Z), discos e S.M.A.R.T., energia/bateria, rede (latência, perda, bufferbloat), relatório HTML/JSON.
@@ -13,9 +15,9 @@ com correções de segurança e de bugs. Veja [NOTICE.md](NOTICE.md) para a orig
 - **Jogos**: FPS estimado, detector de gargalo, overlay (FPS por ETW) e lançador com perfil por jogo.
 - **Desempenho**: benchmarks (CPU, GPU D3D11, ray tracing DXR, simulação, memória, disco), stress test de CPU/RAM/GPU e verificação de overclock.
 - **Ferramentas**: otimizador, inicialização do Windows, instalar apps (winget), drivers (NVIDIA/AMD) e integração de iluminação (Corsair, OpenRGB, Razer).
-- **RESET MAKER**: portas COM e drivers seriais (CH340, CP210x, FTDI, Prolific, Arduino) incluídos no programa.
+- **Maker**: portas COM e drivers seriais (CH340, CP210x, FTDI, Prolific, Arduino) incluídos no programa.
 
-## A portar do PC Monitor (fase 2)
+## Trazido do PC Monitor (fase 2, concluída)
 - [x] Widgets flutuantes configuráveis (página **Widgets**: várias janelas, cantos magnéticos, cores, opacidade, tamanho, clique atravessa, escolha e ordem dos sensores)
 - [x] Histórico em arquivo com detecção de queda (sessão sem marca de fim normal) e resumo dos últimos valores
 - [x] Alertas de temperatura e RAM (aviso no canto da tela, com cooldown por sensor; configurável na página Diagnóstico)

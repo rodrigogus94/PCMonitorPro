@@ -154,7 +154,7 @@ public partial class MainWindow
         }
         List<string> list = new List<string>();
         int code = Nvml.SetPowerLimitMw(ocGpu, (uint)(OcPower.Value * 1000.0));
-        string text = Nvml.Explain(code);
+        string? text = Nvml.Explain(code);
         list.Add((text != null) ? ("Energia: não aplicado (" + text + ").") : $"Energia: {OcPower.Value:0} W aplicado.");
         uint? ocPendingCap = _ocPendingCap;
         int code2;
@@ -167,7 +167,7 @@ public partial class MainWindow
         {
             code2 = Nvml.ResetGpuClocks(ocGpu);
         }
-        string text2 = Nvml.Explain(code2);
+        string? text2 = Nvml.Explain(code2);
         if (text2 != null)
         {
             list.Add("Teto de clock: não aplicado (" + text2 + ").");
@@ -227,7 +227,7 @@ public partial class MainWindow
             _ocClockCap = null;
         }
         TextBlock ocGpuResult = OcGpuResult;
-        string text = Nvml.Explain(code) ?? Nvml.Explain(num3);
+        string? text = Nvml.Explain(code) ?? Nvml.Explain(num3);
         ocGpuResult.Text = ((text != null) ? ("Restauração parcial: " + text + ".") : "GPU de volta ao padrão de fábrica.");
         UpdateOcGpuState();
     }
@@ -281,7 +281,7 @@ public partial class MainWindow
         double sumGpuW = 0.0;
         int nCpuW = 0;
         int nGpuW = 0;
-        string fail = null;
+        string? fail = null;
         StressTester stress = new StressTester();
         GpuBurn burn = new GpuBurn();
         try
@@ -306,7 +306,7 @@ public partial class MainWindow
                 _gpuBenchActive = true;
                 using (ct.Register(gb.Cancel))
                 {
-                    GpuGameResult gpuGameResult = await Task.Factory.StartNew((Func<GpuGameResult>)gb.Run, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+                    GpuGameResult? gpuGameResult = await Task.Factory.StartNew((Func<GpuGameResult?>)gb.Run, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
                     if (gpuGameResult != null)
                     {
                         gpuScore = gpuGameResult.Score;
@@ -488,7 +488,7 @@ public partial class MainWindow
         OcResult.ItemsSource = list;
         OcResult.Foreground = (flag4 ? Fg : Ink);
         OcVerdictCard.Visibility = Visibility.Visible;
-        string[] obj = new string[5]
+        string?[] obj = new string?[5]
         {
             flag4 ? "estável" : "INSTÁVEL",
             " · ",
