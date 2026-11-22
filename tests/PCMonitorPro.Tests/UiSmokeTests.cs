@@ -111,6 +111,7 @@ public class UiSmokeTests : IDisposable
         if (Application.Current != null) return;
         // URIs de pacote relativas (Assets/logo.png) precisam apontar para o assembly do programa, não para o testhost
         typeof(Application).GetField("_resourceAssembly", BindingFlags.NonPublic | BindingFlags.Static)!.SetValue(null, typeof(MainWindow).Assembly);
+        App.IsUnderTest = true;   // sem instância única nem janela extra: veja App.OnStartup
         var app = new App();
         app.InitializeComponent();
         // sem isto o WPF encerra o Application quando o primeiro teste fecha sua janela, e não dá para criar outro no processo

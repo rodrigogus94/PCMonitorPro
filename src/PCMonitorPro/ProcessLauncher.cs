@@ -34,8 +34,27 @@ public static class ProcessLauncher
     {
         if (!Uri.TryCreate(uri, UriKind.Absolute, out var u) || u.Scheme is "file" or "javascript")
             throw new InvalidOperationException("Endereço inválido.");
-        StartDeElevated("explorer.exe", $"\"{uri}\"");
+        var (file, args) = UriLaunchCommand(uri);
+        StartDeElevated(file, args);
     }
+
+    /// <summary>Programa e argumentos para abrir o endereço. O explorer.exe CORTA o argumento em ~259 caracteres (MAX_PATH), o que
+    /// quebrava a URL de login do Google (o escopo saía pela metade); endereços http(s) longos vão pelo rundll32 (url.dll).</summary>
+    public static (string File, string Args) UriLaunchCommand(string uri)
+    {
+        bool web = uri.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || uri.StartsWith("https://", StringComparison.OrdinalIgnoreCase);
+        if (web && uri.Length > ExplorerArgLimit)
+        {
+            // CreateProcessWithToken aceita no máximo 1024 caracteres na linha de comando
+            if (uri.Length > 900 || uri.Any(c => char.IsWhiteSpace(c) || c == '"'))
+                throw new InvalidOperationException("Endereço longo demais ou com caracteres inválidos para abrir.");
+            return (System.IO.Path.Combine(Environment.SystemDirectory, "rundll32.exe"), "url.dll,FileProtocolHandler " + uri);
+        }
+        return ("explorer.exe", $"\"{uri}\"");
+    }
+
+    /// <summary>Tamanho máximo seguro de endereço pelo explorer.exe.</summary>
+    public const int ExplorerArgLimit = 240;
 
     // ---------------------------------------------------------------- token do shell
     private const uint TOKEN_DUPLICATE = 0x0002, TOKEN_ALL_ACCESS = 0xF01FF, PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;

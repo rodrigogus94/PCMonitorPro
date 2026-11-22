@@ -72,6 +72,23 @@ public class GoogleSyncTests : IDisposable
     }
 
     [Fact]
+    public async Task Login_url_is_complete_and_fits_the_launcher_limit()
+    {
+        string? seen = null;
+        var inner = Browser();
+        var s = NewSettings();
+        s.GoogleClientId = "123456789012-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com";
+        _g.ClientId = s.GoogleClientId;
+        await Service(s, url => { seen = url; return inner(url); }).LoginAsync(CancellationToken.None);
+
+        Assert.NotNull(seen);
+        Assert.Contains("drive.appdata", Uri.UnescapeDataString(seen!));       // escopo inteiro, não cortado
+        Assert.True(seen!.Length < 900, "URL longa demais para o abridor");
+        var (file, args) = ProcessLauncher.UriLaunchCommand(seen);
+        Assert.Contains(seen, args);                                            // o abridor não altera a URL
+    }
+
+    [Fact]
     public async Task Login_without_client_id_explains_what_to_do()
     {
         var ex = await Assert.ThrowsAsync<GoogleSyncException>(() => Service(new AppSettings()).LoginAsync(CancellationToken.None));

@@ -151,4 +151,35 @@ public class ProcessLauncherTests
         Assert.True(p!.WaitForExit(15000));
         Assert.Equal(7, p.ExitCode);
     }
+
+    // ---------- abrir endereços: o explorer.exe corta argumentos longos (~259 caracteres) ----------
+
+    [Fact]
+    public void ShortUri_goes_through_explorer()
+    {
+        var (file, args) = ProcessLauncher.UriLaunchCommand("steam://rungameid/12345");
+        Assert.Equal("explorer.exe", file);
+        Assert.Equal("\"steam://rungameid/12345\"", args);
+    }
+
+    [Fact]
+    public void LongWebUri_goes_through_rundll32_and_is_not_altered()
+    {
+        string url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=123456789012-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com" +
+                     "&redirect_uri=http%3A%2F%2F127.0.0.1%3A5555%2F&response_type=code&scope=openid%20email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.appdata" +
+                     "&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&state=abcdefghijklmnopqrstuv&access_type=offline&prompt=consent";
+        Assert.True(url.Length > 259);   // o tamanho que o explorer.exe cortava
+        var (file, args) = ProcessLauncher.UriLaunchCommand(url);
+        Assert.EndsWith("rundll32.exe", file);
+        Assert.Equal("url.dll,FileProtocolHandler " + url, args);   // a URL inteira, com o escopo completo
+        Assert.Contains("drive.appdata", args);
+    }
+
+    [Fact]
+    public void LongNonWebUri_stays_on_explorer_and_absurd_ones_are_refused()
+    {
+        Assert.Equal("explorer.exe", ProcessLauncher.UriLaunchCommand("steam://x/" + new string('a', 300)).File);
+        Assert.Throws<InvalidOperationException>(() => ProcessLauncher.UriLaunchCommand("https://exemplo.com/" + new string('a', 950)));
+        Assert.Throws<InvalidOperationException>(() => ProcessLauncher.UriLaunchCommand("https://exemplo.com/" + new string('a', 250) + " & calc"));
+    }
 }

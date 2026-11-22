@@ -16,8 +16,13 @@ public partial class App : Application
     [DllImport("user32.dll")] private static extern bool IsIconic(IntPtr h);
     [DllImport("user32.dll")] private static extern bool SetForegroundWindow(IntPtr h);
 
+    /// <summary>Os testes criam um Application, e o WPF chama OnStartup. Sem isto, com o programa real aberto, o teste sinalizaria a
+    /// instância do usuário (mostrando a janela dela) e se encerraria em seguida.</summary>
+    internal static bool IsUnderTest { get; set; }
+
     protected override void OnStartup(StartupEventArgs e)
     {
+        if (IsUnderTest) { base.OnStartup(e); return; }
         AppLog.InstallGlobalHandlers(this);
         AppLog.Info($"PC Monitor Pro iniciado (v{typeof(App).Assembly.GetName().Version}, {Environment.OSVersion.Version})");
         bool first;
