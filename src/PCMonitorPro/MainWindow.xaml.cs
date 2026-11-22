@@ -99,7 +99,7 @@ public partial class MainWindow : Window
         UpdateDashboard();
 
         // A janela aparece já; as coletas pesadas (WMI, sensores, GPU) rodam em paralelo fora da thread da janela.
-        Loaded += async (_, _) => await LoadHardwareAsync();
+        Loaded += async (_, _) => { StartWidgets(); await LoadHardwareAsync(); };
 
         _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         _timer.Tick += (_, _) =>
@@ -110,6 +110,7 @@ public partial class MainWindow : Window
             _monitor.Refresh();
             _recorder?.Tick(_monitor);
             CheckAlerts();
+            _widgets?.Tick(_monitor);
             if (_monitor.IsOpen) StatusText.Text = $"{_monitor.Rows.Count} sensores · atualizado {DateTime.Now:HH:mm:ss}";
             UpdateStressPanel();
             UpdateGpuLive();
@@ -139,6 +140,7 @@ public partial class MainWindow : Window
             ShutdownInteg();
             _launchCts?.Cancel();
             _diagCts?.Cancel(); _cmdCts?.Cancel(); DiagnosticsCollector.Cancel(); CommandRunner.Cancel();
+            FlushWidgets();   // grava posições pendentes e fecha as janelas (senão o app não encerra)
             _recorder?.Dispose();   // grava a marca de fim normal
             _monitor.Dispose();
         };
@@ -278,6 +280,7 @@ public partial class MainWindow : Window
             case "PageEnergy": RefreshEnergy(); break;
             case "PageDiag": InitDiag(); break;
             case "PageCmds": RefreshCommands(); break;
+            case "PageWidgets": InitWidgets(); break;
             case "PageOc": UpdateOcGpuState(); UpdateRecentErrors(); break;
             case "PageInteg": InitInteg(); break;
             case "PageLauncher": InitLauncher(); break;
@@ -292,7 +295,7 @@ public partial class MainWindow : Window
 
     private void ShowPage(string name)
     {
-        foreach (var p in new FrameworkElement[] { PageDash, PageSystem, PageSensors, PageGpu, PageGames, PageBottleneck, PageOverlay, PageBench, PageOptimize, PageOc, PageInteg, PageLauncher, PageDriver, PageStartup, PageApps, PageMakerPorts, PageMakerDrv, PageDisks, PageEnergy, PageNet, PageDiag, PageCmds, PageStress })
+        foreach (var p in new FrameworkElement[] { PageDash, PageSystem, PageSensors, PageGpu, PageGames, PageBottleneck, PageOverlay, PageBench, PageOptimize, PageOc, PageInteg, PageLauncher, PageDriver, PageStartup, PageApps, PageMakerPorts, PageMakerDrv, PageDisks, PageEnergy, PageNet, PageDiag, PageCmds, PageWidgets, PageStress })
             p.Visibility = p.Name == name ? Visibility.Visible : Visibility.Collapsed;
     }
 

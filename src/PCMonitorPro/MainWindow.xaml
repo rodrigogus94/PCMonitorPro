@@ -233,6 +233,12 @@
                                     <TextBlock Text="Comandos" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </RadioButton>
+                            <RadioButton x:Name="NavWidgets" Style="{StaticResource NavItem}" Tag="PageWidgets" Checked="Nav_Checked">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE8A7;" FontFamily="{StaticResource Icons}" FontSize="14" Width="28" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Widgets" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </RadioButton>
                             </StackPanel>
                             <ToggleButton x:Name="GrpGames" Style="{StaticResource NavGroup}" Content="RESET JOGOS"/>
                             <StackPanel x:Name="GrpGamesItems" Margin="10,0,0,4" Visibility="{Binding IsChecked, ElementName=GrpGames, Converter={StaticResource BoolVis}}">
@@ -917,6 +923,111 @@
                                      VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" FontFamily="{StaticResource Mono}" FontSize="11"
                                      Tag="A saída aparece aqui, só depois que você escolher executar."/>
                         </Grid>
+                    </Grid>
+                </Grid>
+
+                <!-- ===== WIDGETS FLUTUANTES ===== -->
+                <Grid x:Name="PageWidgets" Margin="36,30,36,30" Visibility="Collapsed">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Margin="0,0,0,14">
+                        <TextBlock Text="Widgets" Style="{StaticResource H1}"/>
+                        <TextBlock Style="{StaticResource Sub}" TextWrapping="Wrap"
+                                   Text="Janelas pequenas sempre no topo, com os valores que você escolher. Arraste para mover (gruda nas bordas), duplo clique abre esta página e o botão direito mostra o menu."/>
+                    </StackPanel>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="250"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <DockPanel>
+                            <WrapPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">
+                                <Button Style="{StaticResource PrimaryButton}" Content="ADICIONAR" Padding="14,8" Margin="0,0,6,6" Click="WidgetAdd_Click"/>
+                                <Button x:Name="WDup" Style="{StaticResource OutlineButton}" Content="DUPLICAR" Padding="14,8" Margin="0,0,6,6" Click="WidgetDup_Click"/>
+                                <Button x:Name="WDel" Style="{StaticResource OutlineButton}" Content="REMOVER" Padding="14,8" Margin="0,0,6,6" Click="WidgetDel_Click"/>
+                            </WrapPanel>
+                            <ListBox x:Name="WList" SelectionChanged="WList_Changed" ItemContainerStyle="{StaticResource ListNavItem}"/>
+                        </DockPanel>
+                        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+                                <TextBlock x:Name="WEmpty" Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Visibility="Collapsed"
+                                           Text="Nenhum widget. Clique em ADICIONAR para criar o primeiro."/>
+                                <StackPanel x:Name="WEditor">
+                                    <TextBlock Text="NOME" Style="{StaticResource Label}"/>
+                                    <TextBox x:Name="WName" MaxLength="30" Margin="0,6,0,14" LostFocus="WField_Changed"/>
+
+                                    <WrapPanel Margin="0,0,0,12">
+                                        <CheckBox x:Name="WVisible" Content="Mostrar na tela" Margin="0,0,20,6" Checked="WField_Changed" Unchecked="WField_Changed"/>
+                                        <CheckBox x:Name="WTitle" Content="Título" Margin="0,0,20,6" Checked="WField_Changed" Unchecked="WField_Changed"/>
+                                        <CheckBox x:Name="WBars" Content="Barras" Margin="0,0,20,6" Checked="WField_Changed" Unchecked="WField_Changed"/>
+                                        <CheckBox x:Name="WLocked" Content="Travar posição" Margin="0,0,20,6" Checked="WField_Changed" Unchecked="WField_Changed"/>
+                                        <CheckBox x:Name="WClickThrough" Content="Clique atravessa" Margin="0,0,0,6" Checked="WField_Changed" Unchecked="WField_Changed"
+                                                  ToolTip="O widget deixa de receber o mouse: não dá para arrastar nem abrir o menu. Desmarque aqui."/>
+                                    </WrapPanel>
+
+                                    <TextBlock Text="DISPOSIÇÃO" Style="{StaticResource Label}"/>
+                                    <WrapPanel Margin="0,6,0,14">
+                                        <RadioButton x:Name="WLayV" Content="Vertical" GroupName="WLay" Style="{StaticResource Chip}" Checked="WField_Changed"/>
+                                        <RadioButton x:Name="WLayH" Content="Horizontal" GroupName="WLay" Style="{StaticResource Chip}" Checked="WField_Changed"/>
+                                    </WrapPanel>
+
+                                    <Grid Margin="0,0,0,14">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="24"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock x:Name="WOpacityLabel" Text="OPACIDADE" Style="{StaticResource Label}"/>
+                                            <Slider x:Name="WOpacity" Minimum="0.2" Maximum="1" Margin="0,8,0,0" ValueChanged="WField_Changed"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock x:Name="WScaleLabel" Text="TAMANHO" Style="{StaticResource Label}"/>
+                                            <Slider x:Name="WScale" Minimum="0.6" Maximum="2.5" Margin="0,8,0,0" ValueChanged="WField_Changed"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <TextBlock Text="COR DE DESTAQUE" Style="{StaticResource Label}"/>
+                                    <WrapPanel x:Name="WAccents" Margin="0,6,0,14">
+                                        <TextBox x:Name="WAccent" Width="90" MaxLength="7" Tag="#4cc9f0" ToolTip="Cor em #RRGGBB" LostFocus="WField_Changed"/>
+                                    </WrapPanel>
+
+                                    <TextBlock Text="POSIÇÃO" Style="{StaticResource Label}"/>
+                                    <WrapPanel Margin="0,6,0,14">
+                                        <Button Style="{StaticResource OutlineButton}" Content="↖ Superior esquerdo" Padding="12,7" Margin="0,0,6,6" Tag="lt" Click="WCorner_Click"/>
+                                        <Button Style="{StaticResource OutlineButton}" Content="↗ Superior direito" Padding="12,7" Margin="0,0,6,6" Tag="rt" Click="WCorner_Click"/>
+                                        <Button Style="{StaticResource OutlineButton}" Content="↙ Inferior esquerdo" Padding="12,7" Margin="0,0,6,6" Tag="lb" Click="WCorner_Click"/>
+                                        <Button Style="{StaticResource OutlineButton}" Content="↘ Inferior direito" Padding="12,7" Margin="0,0,6,6" Tag="rb" Click="WCorner_Click"/>
+                                    </WrapPanel>
+
+                                    <TextBlock Text="O QUE MOSTRAR" Style="{StaticResource Label}"/>
+                                    <Grid Margin="0,6,0,0" Height="300">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="12"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <DockPanel>
+                                            <TextBlock DockPanel.Dock="Top" Text="No widget (nesta ordem)" Foreground="{DynamicResource Muted}" Margin="0,0,0,4"/>
+                                            <WrapPanel DockPanel.Dock="Bottom" Margin="0,6,0,0">
+                                                <Button Style="{StaticResource OutlineButton}" Content="▲" Padding="12,6" Margin="0,0,6,0" Click="WMetricUp_Click" ToolTip="Subir"/>
+                                                <Button Style="{StaticResource OutlineButton}" Content="▼" Padding="12,6" Margin="0,0,6,0" Click="WMetricDown_Click" ToolTip="Descer"/>
+                                                <Button Style="{StaticResource OutlineButton}" Content="REMOVER" Padding="12,6" Click="WMetricRemove_Click"/>
+                                            </WrapPanel>
+                                            <ListBox x:Name="WMetricList"/>
+                                        </DockPanel>
+                                        <DockPanel Grid.Column="2">
+                                            <TextBox DockPanel.Dock="Top" x:Name="WFilter" Tag="Filtrar (ex.: temperatura, GPU, fan)" Margin="0,0,0,4" TextChanged="WFilter_Changed"/>
+                                            <Button DockPanel.Dock="Bottom" Style="{StaticResource OutlineButton}" Content="ADICIONAR AO WIDGET" Padding="12,6" Margin="0,6,0,0" HorizontalAlignment="Left" Click="WMetricAdd_Click"/>
+                                            <ListBox x:Name="WAvail" MouseDoubleClick="WAvail_DoubleClick" SelectionMode="Extended"/>
+                                        </DockPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
                     </Grid>
                 </Grid>
 

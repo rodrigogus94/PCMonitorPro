@@ -72,6 +72,9 @@ public sealed class AppSettings
     public string MilestoneNote { get; set; } = "";
     public string DiagScenario { get; set; } = "geral";
 
+    // Widgets flutuantes (nenhum até o usuário adicionar)
+    public List<WidgetConfig> Widgets { get; set; } = new();
+
     // Alertas de temperatura/RAM (aviso no canto da tela, com cooldown por sensor)
     public bool AlertsEnabled { get; set; } = true;
     public int AlertTempC { get; set; } = 90;
