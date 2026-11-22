@@ -248,4 +248,40 @@ public class UiSmokeTests : IDisposable
             }
         });
     }
+
+    [Fact]
+    public void ImportedProfile_UpdatesScreenWithoutRestart()
+    {
+        RunSta(() =>
+        {
+            EnsureApp();
+            var w = new MainWindow();
+            try
+            {
+                Call(w, "StartWidgets");
+                Call(w, "InitSettings");
+                Call(w, "InitWidgets");
+                var settings = Field<AppSettings>(w, "_settings");
+                var mgr = Field<WidgetManager>(w, "_widgets");
+
+                var src = new AppSettings { AlertTempC = 80, AlertRamPct = 85, HistoryKeepDays = 45, OverlayCorner = "BR", OverlayScale = 1.3, DiagScenario = "disco" };
+                src.Widgets.Add(new WidgetConfig { Name = "Importado" });
+                var sections = new[] { ProfileSection.Alerts, ProfileSection.History, ProfileSection.Widgets, ProfileSection.Overlay, ProfileSection.Diagnostic };
+                var file = ProfileTransfer.Read(ProfileTransfer.Export(src, sections, false));
+                ProfileTransfer.Apply(settings, file, sections);
+
+                w.GetType().GetMethod("ApplyImportedProfile", BindingFlags.NonPublic | BindingFlags.Instance)!
+                    .Invoke(w, new object[] { (IReadOnlyCollection<ProfileSection>)sections });
+
+                Assert.Equal("80", Field<TextBox>(w, "AlertTemp").Text);
+                Assert.Equal("85", Field<TextBox>(w, "AlertRam").Text);
+                Assert.Equal("45", Field<TextBox>(w, "HistDays").Text);
+                Assert.Equal(1, mgr.OpenCount);                                   // widget importado abriu na hora
+                Assert.Single(Field<ListBox>(w, "WList").Items);
+                var corner = Field<StackPanel>(w, "OvCornerPanel").Children.OfType<RadioButton>().Single(r => r.IsChecked == true);
+                Assert.Equal("BR", (string)corner.Tag);
+            }
+            finally { w.Close(); }
+        });
+    }
 }

@@ -61,6 +61,12 @@ Limitação: sobre jogos em **tela cheia exclusiva** os widgets podem não apare
 - **Bandeja do sistema:** o ícone fica ao lado do relógio (duplo clique abre, botão direito tem *Abrir* e *Sair*). Com a opção
   *Ao fechar a janela, continuar na bandeja* ligada, fechar a janela só a esconde: widgets, histórico e alertas continuam. Com
   *Iniciar com o Windows* ligado, o programa abre direto na bandeja. Abrir o programa de novo traz a janela de volta.
+- **Perfil (exportar / importar):** salva em um arquivo `.pmpperfil` as suas configurações e os resultados de benchmark, para
+  levar a outro computador ou guardar numa nuvem (Google Drive, OneDrive, pen drive). Você escolhe o que entra: aparência,
+  widgets, alertas, histórico, overlay, foco do diagnóstico, bandeja e benchmarks. Na importação, o que você marcar
+  **substitui** o atual, exceto os benchmarks, que são **somados** (sem repetir). O nome do computador no arquivo é opcional.
+  **Nunca vão no arquivo:** chave da API, backups do Windows (restaurar originais), perfis e programas dos jogos (caminhos e
+  comandos) e a pasta dos relatórios. Um perfil de fora é tratado como não confiável: tamanho limitado e valores validados.
 - **Histórico de sensores:** liga/desliga a gravação e define por quantos dias guardar (padrão 14). Vale na próxima abertura.
 - **Cores dos widgets:** limites de amarelo e vermelho para temperatura e porcentagem.
 - **Relatórios:** pasta onde o diagnóstico é salvo.

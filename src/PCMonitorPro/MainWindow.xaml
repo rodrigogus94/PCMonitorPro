@@ -948,6 +948,18 @@
                         </Border>
                         <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
                             <StackPanel>
+                                <TextBlock Text="PERFIL (EXPORTAR / IMPORTAR)" Style="{StaticResource Label}"/>
+                                <TextBlock Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,6,0,10"
+                                           Text="Salva suas configurações e resultados de benchmark em um arquivo para usar em outro computador. Guarde o arquivo onde quiser (Google Drive, OneDrive, pen drive). Você escolhe o que entra. Nunca vão no arquivo: chave da API, backups do Windows e perfis dos jogos."/>
+                                <WrapPanel>
+                                    <Button Style="{StaticResource OutlineButton}" Content="EXPORTAR PERFIL…" Padding="14,7" Margin="0,0,8,0" Click="BtnProfileExport_Click"/>
+                                    <Button Style="{StaticResource OutlineButton}" Content="IMPORTAR PERFIL…" Padding="14,7" Click="BtnProfileImport_Click"/>
+                                </WrapPanel>
+                                <TextBlock x:Name="ProfileStatus" Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16" Padding="18,14">
+                            <StackPanel>
                                 <TextBlock Text="HISTÓRICO DE SENSORES" Style="{StaticResource Label}"/>
                                 <TextBlock Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,6,0,10"
                                            Text="Grava temperatura, uso e RAM a cada 5 segundos. Se o PC cair (tela azul, reinício seco), a próxima abertura mostra os últimos valores. Vale na próxima vez que abrir o programa."/>

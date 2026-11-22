@@ -19,6 +19,7 @@ com correções de segurança e de bugs. Veja [NOTICE.md](NOTICE.md) para a orig
 
 ## Trazido do PC Monitor (fase 2, concluída)
 - [x] Widgets flutuantes configuráveis (página **Widgets**: várias janelas, cantos magnéticos, cores, opacidade, tamanho, clique atravessa, escolha e ordem dos sensores)
+- [x] Exportar/importar perfil (configurações e benchmarks em arquivo, para outro PC ou nuvem; sem segredos)
 - [x] Histórico em arquivo com detecção de queda (sessão sem marca de fim normal) e resumo dos últimos valores
 - [x] Alertas de temperatura e RAM (aviso no canto da tela, com cooldown por sensor; configurável na página Diagnóstico)
 - [x] Diagnóstico do Windows por cenário (tela azul, lentidão, calor, disco, rede, vídeo, update), com causa mais provável, evidências e passos

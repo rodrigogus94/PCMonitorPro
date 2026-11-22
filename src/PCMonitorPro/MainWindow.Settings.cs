@@ -109,4 +109,85 @@ public partial class MainWindow
         }
         catch (Exception ex) { AppLog.Warn("Não foi possível abrir a pasta", ex); }
     }
+
+    // ---------------- perfil (exportar / importar) ----------------
+
+    private void BtnProfileExport_Click(object sender, RoutedEventArgs e)
+    {
+        var ask = ProfileDialog.Ask(this, "Exportar perfil", "Escolha o que vai para o arquivo. Chave da API, backups do Windows e perfis dos jogos nunca são incluídos.",
+            Enum.GetValues<ProfileSection>(), "EXPORTAR", "Incluir o nome deste computador no arquivo", extraDefault: true);
+        if (ask is not { } a) return;
+        var dlg = new Microsoft.Win32.SaveFileDialog
+        {
+            Title = "Exportar perfil", FileName = $"perfil-pcmonitorpro-{DateTime.Now:yyyyMMdd}", DefaultExt = ProfileTransfer.Extension,
+            Filter = $"Perfil do PC Monitor Pro (*{ProfileTransfer.Extension})|*{ProfileTransfer.Extension}",
+        };
+        if (dlg.ShowDialog(this) != true) return;
+        try
+        {
+            File.WriteAllText(dlg.FileName, ProfileTransfer.Export(_settings, a.Sections, a.Extra), new System.Text.UTF8Encoding(false));
+            ProfileStatus.Text = $"Perfil salvo em {dlg.FileName}";
+        }
+        catch (Exception ex)
+        {
+            AppLog.Warn("Exportar perfil", ex);
+            ProfileStatus.Text = "Não foi possível salvar o perfil: " + ex.Message;
+        }
+    }
+
+    private void BtnProfileImport_Click(object sender, RoutedEventArgs e)
+    {
+        var dlg = new Microsoft.Win32.OpenFileDialog
+        {
+            Title = "Importar perfil", CheckFileExists = true,
+            Filter = $"Perfil do PC Monitor Pro (*{ProfileTransfer.Extension})|*{ProfileTransfer.Extension}|Todos os arquivos (*.*)|*.*",
+        };
+        if (dlg.ShowDialog(this) != true) return;
+        ProfileFile file;
+        try
+        {
+            if (new FileInfo(dlg.FileName).Length > ProfileTransfer.MaxBytes)
+                throw new ProfileException("O arquivo é grande demais para ser um perfil do PC Monitor Pro.");
+            file = ProfileTransfer.Read(File.ReadAllText(dlg.FileName));
+        }
+        catch (ProfileException ex) { ProfileStatus.Text = ex.Message; return; }
+        catch (Exception ex)
+        {
+            AppLog.Warn("Importar perfil", ex);
+            ProfileStatus.Text = "Não foi possível ler o arquivo: " + ex.Message;
+            return;
+        }
+        var avail = ProfileTransfer.Available(file);
+        if (avail.Count == 0) { ProfileStatus.Text = "Este perfil não tem nenhuma parte para importar."; return; }
+
+        string origin = $"Perfil exportado em {file.ExportedAt:dd/MM/yyyy HH:mm}" + (string.IsNullOrWhiteSpace(file.Computer) ? "" : $" de {file.Computer}") +
+                        (string.IsNullOrWhiteSpace(file.App) ? "." : $" ({file.App}).");
+        var ask = ProfileDialog.Ask(this, "Importar perfil", origin + " O que você marcar substitui o que há hoje; resultados de benchmark são somados aos atuais.", avail, "IMPORTAR");
+        if (ask is not { } a) return;
+
+        ProfileTransfer.Apply(_settings, file, a.Sections);
+        _settings.Save();
+        ApplyImportedProfile(a.Sections);
+        ProfileStatus.Text = "Perfil importado: " + string.Join(", ", a.Sections.Select(x => ProfileTransfer.Names[x].Split(" (")[0].ToLowerInvariant())) + ".";
+    }
+
+    /// <summary>Faz as partes importadas valerem agora, sem precisar reabrir o programa.</summary>
+    private void ApplyImportedProfile(IReadOnlyCollection<ProfileSection> sections)
+    {
+        ApplyStoredSettings();
+        if (sections.Contains(ProfileSection.Appearance)) { ThemeManager.Apply(_settings.LightTheme); UpdateThemeButton(); }
+        if (sections.Contains(ProfileSection.Widgets)) { _widgets?.Sync(); if (_wInit) RefreshWidgetList(); }
+        if (sections.Contains(ProfileSection.Overlay))
+        {
+            _ovShow = null;
+            foreach (var rb in OvCornerPanel.Children.OfType<RadioButton>()) rb.IsChecked = (string)rb.Tag == _settings.OverlayCorner;
+            foreach (var rb in OvScalePanel.Children.OfType<RadioButton>())
+                rb.IsChecked = Math.Abs(double.Parse((string)rb.Tag, System.Globalization.CultureInfo.InvariantCulture) - _settings.OverlayScale) < 0.01;
+            BuildOverlayPicker();
+        }
+        if (sections.Contains(ProfileSection.Diagnostic) && _diagInit)
+            foreach (var chip in DiagScenarios.Children.OfType<RadioButton>()) chip.IsChecked = (string)chip.Tag == _settings.DiagScenario;
+        if (sections.Contains(ProfileSection.Benchmarks)) UpdateDashboard();
+        InitSettings();   // recarrega alertas, histórico, bandeja e limites na tela
+    }
 }
