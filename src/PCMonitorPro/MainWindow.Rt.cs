@@ -3,7 +3,7 @@ using System.Windows.Threading;
 
 namespace PCMonitorPro;
 
-/// <summary>RESET BENCH · Ray tracing (DXR 1.1): aquecimento + 3 passadas, nota pela mediana e variação entre passadas.</summary>
+/// <summary>BENCHMARK · Ray tracing (DXR 1.1): aquecimento + 3 passadas, nota pela mediana e variação entre passadas.</summary>
 public partial class MainWindow
 {
     private GpuRtBench? _rtBench;

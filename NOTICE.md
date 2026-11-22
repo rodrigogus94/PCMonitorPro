@@ -6,7 +6,7 @@ O PC Monitor Pro reúne código e componentes de outros projetos. Mantenha estes
 - **RESET EXPLODE** (c) 2026 Gustavo (GustavoReset), licença MIT. Origem do código C#/WPF (sensores, GPU, benchmarks, overlay,
   otimização, inicialização, drivers, RESET MAKER, integração RGB e jogos). A licença original está em `docs/upstream/ResetExplode-LICENSE`.
   O projeto de origem não aceita pull requests; este é um derivado independente (fork) permitido pela licença.
-- **PC Monitor** (c) 2026 Rodrigo Santana. Widgets, histórico de quedas, diagnóstico e comandos sugeridos (em portagem, fase 2).
+- **PC Monitor** (c) 2026 Rodrigo Santana. Widgets, histórico de quedas, diagnóstico, comandos sugeridos, alertas e iniciar com o Windows (reescritos em C#).
 
 ## Bibliotecas (NuGet)
 | Componente | Licença |
@@ -23,8 +23,9 @@ O PC Monitor Pro reúne código e componentes de outros projetos. Mantenha estes
 Confira os termos de redistribuição de cada fabricante antes de redistribuir o `.exe`.
 
 ## Marca e imagens
-Os arquivos de `src/PCMonitorPro/Assets` (logos e ícone) vieram do RESET EXPLODE e pertencem ao autor original.
-Troque-os por imagens próprias antes de publicar uma versão com a sua marca.
+Os arquivos de `src/PCMonitorPro/Assets` (logos e ícone) foram criados para o PC Monitor Pro (monitor com linha de pulso) e
+não vêm do RESET EXPLODE. Os nomes das áreas (Jogos, Benchmark, Otimizar, Drivers, Overclock, Maker, Iluminação) são descritivos.
+O nome "RESET EXPLODE" e o logo do projeto de origem pertencem ao autor original e não são usados aqui.
 
 ## Componentes externos usados em tempo de execução
 - **PawnIO** (driver para ler sensores da CPU): instalado à parte pelo usuário (`winget install namazso.PawnIO`).

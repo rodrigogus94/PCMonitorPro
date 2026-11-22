@@ -8,7 +8,7 @@ using System.Windows.Threading;
 
 namespace PCMonitorPro;
 
-/// <summary>Saúde dos discos, benchmark de disco (RESET BENCH) e exportação de relatório.</summary>
+/// <summary>Saúde dos discos, benchmark de disco (BENCHMARK) e exportação de relatório.</summary>
 public partial class MainWindow
 {
     // ================= Saúde dos discos =================
@@ -135,7 +135,7 @@ public partial class MainWindow
             Title = "Exportar relatório",
             Filter = "Relatório HTML (*.html)|*.html|Dados JSON (*.json)|*.json",
             DefaultExt = ".html",
-            FileName = $"RESET-EXPLODE-relatorio-{DateTime.Now:yyyyMMdd-HHmm}",
+            FileName = $"PCMonitorPro-relatorio-{DateTime.Now:yyyyMMdd-HHmm}",
         };
         if (dlg.ShowDialog(this) != true) return;
         string path = dlg.FileName;
@@ -189,7 +189,7 @@ public partial class MainWindow
         string TestName(string t) => t switch
         {
             "gpu" => "Cena de jogo (GPU)", "sim" => "Simulação de jogo (CPU)", "mem" => "Memória e carregamento",
-            "disk" => "Disco", "oc" => "RESET OC (estabilidade)", _ => t
+            "disk" => "Disco", "oc" => "OVERCLOCK (estabilidade)", _ => t
         };
         var list = _settings.BenchRecords.Select(r => new ReportBench(r.Date, TestName(r.Test), r.Summary)).ToList();
         foreach (var r in _settings.BenchRuns)

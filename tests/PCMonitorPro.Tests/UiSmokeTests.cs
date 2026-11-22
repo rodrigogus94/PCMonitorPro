@@ -75,6 +75,8 @@ public class UiSmokeTests : IDisposable
             var w = new MainWindow();
             try
             {
+                Assert.Equal("v0.17.0", Field<TextBlock>(w, "SideVersion").Text);   // do csproj, não fixo
+                Assert.DoesNotContain("RESET", Field<TextBlock>(w, "TitlePage").Text);
                 Call(w, "InitDiag");
                 var chips = Field<WrapPanel>(w, "DiagScenarios");
                 Assert.Equal(Diagnostics.Scenarios.Count, chips.Children.Count);
